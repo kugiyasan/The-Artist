@@ -1,0 +1,320 @@
+{
+  "pause": " Press enter to continue.\n",
+  "error": " Error: Invalid option selected. Press enter to go back.",
+  "gameover": " Game over. Press enter to terminate the program.\n",
+  "title": {
+    "warnings": [
+      " Please ensure that all of the following words are easily readable. Adjust your color settings if they are not.",
+      " \u001b[1;30;47mBlack\u001b[1;37;40m \u001b[1;31;40mRed \u001b[1;32;40mGreen \u001b[1;33;40mYellow \u001b[1;34;40mBlue \u001b[1;35;40mPurple \u001b[1;36;40mCyan \u001b[1;37;40mWhite"
+    ],
+    "asciiArt": [
+      "\u001b[1;36;40m",
+      "  ▄▀▀▀█▀▀▄  ▄▀▀▄ ▄▄   ▄▀▀█▄▄▄▄      ▄▀▀█▄   ▄▀▀▄▀▀▀▄  ▄▀▀▀█▀▀▄  ▄▀▀█▀▄   ▄▀▀▀▀▄  ▄▀▀▀█▀▀▄ ",
+      " █    █  ▐ █  █   ▄▀ ▐  ▄▀   ▐     ▐ ▄▀ ▀▄ █   █   █ █    █  ▐ █   █  █ █ █   ▐ █    █  ▐ ",
+      " ▐   █     ▐  █▄▄▄█    █▄▄▄▄▄        █▄▄▄█ ▐  █▀▀█▀  ▐   █     ▐   █  ▐    ▀▄   ▐   █     ",
+      "    █         █   █    █    ▌       ▄▀   █  ▄▀    █     █          █    ▀▄   █     █      ",
+      "  ▄▀         ▄▀  ▄▀   ▄▀▄▄▄▄       █   ▄▀  █     █    ▄▀        ▄▀▀▀▀▀▄  █▀▀▀    ▄▀       ",
+      " █          █   █     █    ▐       ▐   ▐   ▐     ▐   █         █       █ ▐      █         ",
+      " ▐          ▐   ▐     ▐                              ▐         ▐       ▐        ▐         \u001b[1;37;40m\n\n",
+      "[1] New Game",
+      "[2] Tutorial",
+      "[3] Continue",
+      "[4] Credits"
+    ],
+    "prompt": " Please enter the number corresponding to your choice to proceed:\n"
+  },
+  "intro": {
+    "text1": [
+      "\u001b[1;34;40m I am the Artist",
+      " From my paintbrush",
+      " Worlds are created",
+      " From my palette",
+      " Creatures are born",
+      " But this morning",
+      " I feel empty like the blank canvas standing before me\u001b[1;37;40m"
+    ],
+    "text2": [
+      "\u001b[1;34;40m Whenever I feel empty I like to dream",
+      " Deep in my dreams there is someone who can help",
+      " The road will be long and tiring",
+      " But the day is young and so am I\u001b[1;37;40m"
+    ],
+    "question": "\u001b[1;34;40m Where shall I begin my journey?\u001b[1;37;40m",
+    "choices": [
+      "[1] \u001b[1;31;40m The Autumn Monastery\u001b[1;37;40m",
+      "[2] \u001b[1;34;40m The Prismatic Observatory\u001b[1;37;40m",
+      " Please enter the number corresponding to your choice to proceed:"
+    ]
+  },
+  "fight": {
+    "death": [
+      "\u001b[1;34;40m My mind is pained with the struggle of creativity",
+      " I keep looking for something new to paint, but nothing comes to mind",
+      " Perhaps this dream was all for naught",
+      " Perhaps I was never meant to be an artist",
+      " It is now time to wake up",
+      " I open my eyes",
+      " And find myself sitting still",
+      " With an empty canvas standing before me"
+    ],
+    "reshuffle": [
+      "\u001b[1;34;40m I have turned the final page of my sketchbook",
+      " Now is a good opportunity to add the new drawings I have learned",
+      " In the last few steps of my journey",
+      " But in the murky depths of my soul",
+      " Something which I have been struggling to conceal",
+      " Emerges from the darkness",
+      " And finds its way into my sketchbook"
+    ]
+  },
+  "monastery": {
+    "intro": [
+      "\u001b[1;34;40m I close my eyes",
+      " I find myself in the clearing of a forest",
+      " Surrounded by the warm colors of fall",
+      " A path before me stretches to a great monastery in the distance",
+      " Many statues watch over the road with great patience",
+      " I can feel without doubt",
+      " That the inhabitants of this peculiar place are ready to test my skill and wit",
+      " If I prevail",
+      " Then perhaps they shall grant me insight on where to go next.\u001b[1;37;40m"
+    ],
+    "ending": {
+      "text1": [
+        " \u001b[1;34;40mThe Master turns the handle of his Monastery and invites me inside",
+        " I take a moment to admire my surroundings, decorated by golden mosaics of the grove's inhabitants",
+        " A small square red mat lies at the center of the room, surrounded by four bonsai trees",
+        " I suddenly remind myself of the mysterious figure on the Master's robes",
+        " But before I can get a closer look at it, the Master bows and blocks my view of the unfamiliar silhouette yet again",
+        " \"Breathe deeply, for you are no longer my disciple.\"",
+        " \"You are...\""
+      ],
+      "honor0": [
+        " \u001b[1;34;40mThe Master pauses, then whispers, \"unworthy.\"",
+        " \"Your skill is insufficient.\"",
+        " \"It saddens me greatly to say it, but your journey ends here.\"",
+        " \"Farewell, Artist. Perhaps your next attempt shall be more successful?",
+        " Before I can express my disagreement, I feel the world around me fades into nothingness",
+        " When my vision returns, I find myself sitting still",
+        " With an empty canvas standing before me"
+      ],
+      "honor1": [
+        " \u001b[1;34;40mThe Master pauses, then whispers, \"mediocre.\"",
+        " \"As you have shown to be not completely talentless, I must allow you to pursue your travels.\"",
+        " \"Know this: you must seek to improve your skills, for the creatures you will encounter beyond my domain are not as merciful as I am.\"",
+        " \"For now, Artist, sit on the red mat, close your eyes, and dream vividly of your next destination.\""
+      ],
+      "honor2": [
+        " \u001b[1;34;40mThe Master pauses, then whispers, \"my acolyte.\"",
+        " \"You have learned well, and your sketchbook is filled with skillful drawings.\"",
+        " \"Look inside it; I have added one of mine as a way for you to remember my teachings.\"",
+        " \"I regret to inform you that we must now part ways.\"",
+        " \"I can gurarantee that all you have learned in my grove will be of great use to you.\"",
+        " \"And now, Artist, sit on the red mat, close your eyes, and dream vividly of your next destination.\""
+      ],
+      "honor3": [
+        " \u001b[1;34;40mThe Master pauses, then whispers, \"the new Master.\"",
+        " \"You have outdone me in every way possible.\"",
+        " \"I have added a creation of mine in your sketchbook, but I imagine it pales in comparison of what you have acquired so far.\"",
+        " \"Listen. I must tell you something important.\"",
+        " \"From all the statues you have seen in my grove, one is missing.\"",
+        " \"That statue is the Lamb; a frail and weak creature, which felt completely out of place among the talented residents of my domain.\"",
+        " \"I tried many times to make her better, but to no avail\"",
+        " \"One morning, she left my grove, never to be seen again\"",
+        " \"If you see her, wherever you will go...\"",
+        " \"Tell her the Autumn Monastery is always ready to welcome her back\"",
+        " \"And I could say the same thing for you, dear Master\"",
+        " \"Now, I shall not retain you any longer. Please sit on the red mat, close your eyes, and dream vividly of your next destination.\""
+      ],
+      "text2": [
+        "\u001b[1;34;40m I close my eyes",
+        " I find myself in the middle of a great staircase, floating in the void",
+        " Hearing a faint buzzing sound from the summit, I turn my attention towards it",
+        " A richly decorated gate coated in thick, sweet and golden honey urges me to approach it",
+        " And perhaps taste some of its delightful nectar along the way",
+        " A sudden orchestral crescendo coming from the bottom of the stairway snaps me out of my reverie",
+        " An entrance made of soft purple cloth to what seems to be a circus invites me inside",
+        " And shall perhaps allow me to take part in the show taking place behind it",
+        " Where shall I pursue my travels?"
+      ]
+    }
+  },
+  "observatory": [
+    "\u001b[1;34;40m I close my eyes",
+    " I find myself at the base of a great tower",
+    " Surrounded by the echoing humming of the cosmos",
+    " At the very summit of the spire",
+    " I can see without doubt",
+    " A telescope which shall grant priceless insights",
+    " On the astral secrets of the universe",
+    " If I prevail",
+    " Then perhaps I may use it and plan where to go next.\u001b[1;37;40m"
+  ],
+  "hive(not used)": [
+    "\u001b[1;34;40m I close my eyes",
+    " I find myself in the middle of a bustling city",
+    " Surrounded by the deafening buzzes of many insect-like humanoids",
+    " Flies, moths, butterflies, bees and many others alike",
+    " March, flutter and crawl towards a great palace built atop the walls of the metropolis",
+    " I can hear without doubt",
+    " The humming songs chanted by the ruler of the capital",
+    " If I prevail",
+    " Then perhaps I may ask the Queen for advice on where to go next"
+  ],
+  "enemies": {
+    "tiger": [
+      " I stand before the statue of a ferocious striped beast",
+      "Whose savagery would no doubt be a great addition to my sketchbook",
+      "I can hear its callous, uncaring voice",
+      "\"Another Disciple of the Master?\"",
+      "\"Perhaps your remains will be tastier than the last\"",
+      "\"Your defeat is inevitable\"",
+      "\"This grove shall be the last thing you see.\""
+    ],
+    "swan": [
+      " I stand before the statue of a magnificent white bird",
+      "Whose silhouette would no doubt be a great addition to my sketchbook",
+      "I can hear its beautiful signing voice",
+      "\"My power is unmatched and my beauty without equal\"",
+      "\"You appear to be a rather talented Artist\"",
+      "\"Therefore I shall allow you to paint my magnificence without hardships\"",
+      "\"Hurry before I change my mind.\""
+    ],
+    "dragon": [
+      " I stand before the statue of a formidable red dragon",
+      "Whose power would no doubt be a great addition to my sketchbook",
+      "I can hear its booming, majestic voice",
+      "\"I see you have chosen the path of the Monastery\"",
+      "\"Know that I am the ruler of this grove\"",
+      "\"And that only my Master, who resides inside the monastery, can surpass my prowess\"",
+      "\"Can you, human? Show me what you are capable of.\""
+    ],
+    "crane": [
+      " I stand before the statue of a silent, sleeping crane",
+      "Whose placidity would no doubt be a great addition to my sketchbook",
+      "Despite all my attempts to wake it, as I imagine that their beauty would increase tenfold once awoken",
+      "The crane remains mute",
+      "As I nervously unpack my painting tools",
+      "I worry that the crane may be dreaming of me, and of what perils I may encounter on my journey."
+    ],
+    "leopard": [
+      " I stand before the statue of a swift spotted feline",
+      "Whose alacrity would no doubt be a great addition to my sketchbook",
+      "I can hear its growling, threatening voice",
+      "\"Dear Artist, how about a race?\"",
+      "\"I will chase, and you shall run\"",
+      "\"Can your legs keep up?\"",
+      "\"If they do, I will allow you to paint me, and perhaps learn that speed over carefulness is sometimes your best bet.\""
+    ],
+    "snake": [
+      " I stand before the statue of a slithering, scaly snake",
+      "Whose elusiveness would no doubt be a great addition to my sketchbook",
+      "I can hear its hissing, rattling voice",
+      "\"Ssso, human, you have chosen me as the sssubject of your next creation?\"",
+      "\"I am flattered, but alssso sssurprised\"",
+      "\"Please, take a ssseat, and don't forget a single detail of my glissstening ssscalesss.\""
+    ],
+    "monkey": [
+      " I stand before the statue of a joyful, smiling monkey",
+      "Whose mischief would no doubt be a great addition to my sketchbook",
+      "As I prepare my painting tools, I notice one of the pages bearing one of my previous creations has vanished",
+      "I can hear its playful, high-pitched voice",
+      "\"Teehee! It's mine now!\"",
+      "\"Surely I am beautiful enough to replace it. Go on, paint me, Artist.\"",
+      "\"Teehee!\""
+    ],
+    "stag": [
+      " I stand before the statue of a noble, venerable stag",
+      "Whose stature would no doubt be a great addition to my sketchbook",
+      "I can hear its deep, respectful voice",
+      "\"Disciple of the Master, you walk among our garden\"",
+      "\"Be respectful of all those who have come before you\"",
+      "\"As each of your steps flatten the soil of our great Monastery.\""
+    ],
+    "mantis": [
+      " I stand before the calming statue of a praying mantis",
+      "Whose serenity would no doubt be a great addition to my sketchbook",
+      "I can hear its tranquil whispers",
+      "\"Breathe deeply, Artist.\"",
+      "\"Through anger lies failure, through focus lies success\"",
+      "\"If you show me that you have learned well\"",
+      "\"Then you may draw me in that sketchbook of yours and find serenity.\""
+    ],
+    "wolf": [
+      " I stand before the fearsome statue of a gray wolf",
+      "Whose frightening presence would no doubt be a great addition to my sketchbook",
+      "I can hear its intimidating, growling voice",
+      "\"Artist, prepare for one of the greatest challenges of the beginning of your journey\"",
+      "\"Prove your skill and might\"",
+      "\"If you prevail, I will be glad to join your sketchbook\"",
+      "\"And perhaps devour some of its inhabitants along the way.\""
+    ],
+    "rabbit": [
+      " I stand before the statue of a small, adorable rabbit",
+      "Whose fluffiness would no doubt be a great addition to my sketchbook",
+      "I can hear its soft chirping voice",
+      "\"Greetings, good Artist\"",
+      "\"My body is small and weak and cannot forbid you from drawing it\"",
+      "\"As you paint the outline of my frail shape\"",
+      "\"Please remember this moment of calm before the storm.\""
+    ],
+    "turtle": [
+      " I stand before the statue of a sturdy, venerable turtle",
+      "Whose resilience would no doubt be a great addition to my sketchbook",
+      "I can hear its old, raspy voice",
+      "\"For countless years, I have seen many of your kind walk in this grove\"",
+      "\"Some have fallen, some have thrived\"",
+      "\"No matter how well you succeed\"",
+      "\"I will remain here for many more years, and I shall remember them all\""
+    ],
+    "spider": [
+      " I stand before the tiny sculpture of a green spider",
+      "Interested by this peculiar piece of artwork",
+      "I decide to bring it along on my journey",
+      "And paint the outline of this odd creature",
+      "In the corner of the first page of my sketchbook."
+    ],
+    "crow": [
+      " I stand before the statue of a somber, coal-colored crow",
+      "Whose gloominess would no doubt be a great addition to my sketchbook",
+      "I can hear its cackling, monotonous voice",
+      "\"No matter how far you get and what beautiful paintings you come up with\"",
+      "\"Death will come to you, and reduce your body to ash\"",
+      "\"But if you have worked hard\"",
+      "\"Then perhaps your achievements may live on.\""
+    ],
+    "frog": [
+      " I stand before the statue of a minuscule, wise frog",
+      "Whose prudence would no doubt be a great addition to my sketchbook",
+      "I can hear its humble, polite voice",
+      "\"You have come far from your home to learn from us\"",
+      "\"If there is only one lesson to remember\"",
+      "\"It is that not all your work is perfect, and that there is no shame in losing some of it.\""
+    ],
+    "acolyte": [
+      "\u001b[1;34;40m \"I can see that the notion of rest is alien to you\"",
+      " \"For you, every situation is yet another painting waiting to be created, is it not?\"",
+      " \"My apologies, dear Artist, but a sketch of me is not granted\"",
+      " \"It is earned.\"",
+      " I open my sketchbook at its first page, as the Acolyte takes on her battle stance."
+    ],
+    "master1": [
+      " \u001b[1;31;40mROUND 1\n",
+      " \u001b[1;34;40m\"Each statue I have carved possesses a soul of its own.\"",
+      " \"However, I am, and will always will be their Master\"",
+      " \"To begin your final test, let us see if you have memorized their lessons.\""
+    ],
+    "master2": [
+      " \u001b[1;31;40mROUND 2\n",
+      " \u001b[1;34;40m\"This next battle should be much easier, now that you have acquainted yourself with my fighting style.\"",
+      " \"However, make sure to keep painting to the best of your ability!\"",
+      " \"I like to grant a special reward to disciples who truly manage to exceed my expectations.\""
+    ],
+    "master3": [
+      " \u001b[1;31;40mFINAL ROUND\n",
+      " \u001b[1;34;40m\"It is time. Show me the true colors of your power!\"",
+      " \"I wish to see every work of art you have crafted in my grove.\"",
+      " \"Even the worst Flaws can be turned into something beautiful by the most proficient students!\""
+    ]
+  }
+}
