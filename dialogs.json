@@ -47,6 +47,9 @@
     ]
   },
   "fight": {
+    "win": "\u001b[1;34;40m I have proven myself worthy, and may now add a sketch of this creature to my collection.\u001b[1;37;40m\n\n \u001b[1;33;40m{}\u001b[1;37;40m has been added to your discard pile.\n",
+    "abandon": "\u001b[1;34;40m\n Perhaps not all things are meant to be painted. Surely, some of my sketches must be flawed.\u001b[1;37;40m",
+    "forget_cards": "\u001b[1;34;40m\n Using my lost life essence, I shall burn away some of these worthless scribbles.\u001b[1;37;40m",
     "death": [
       "\u001b[1;34;40m My mind is pained with the struggle of creativity",
       " I keep looking for something new to paint, but nothing comes to mind",
@@ -78,6 +81,37 @@
       " That the inhabitants of this peculiar place are ready to test my skill and wit",
       " If I prevail",
       " Then perhaps they shall grant me insight on where to go next.\u001b[1;37;40m"
+    ],
+    "first_battle": [
+      "\u001b[1;34;40m As my first steps scatter the red leaves across the soil",
+      " I find myself inspired by the statues surrounding the trail",
+      " Surely they would not mind appearing in a painting or two",
+      " Who shall I paint first?\u001b[1;37;40m"
+    ],
+    "interlude1": [
+      "\u001b[1;34;40m I continue my path towards the monastery",
+      " Breathing calmly the fresh air of the forest",
+      " Perhaps I should enjoy this moment of peace",
+      " And paint a few more statues along the way.\u001b[1;37;40m"
+    ],
+    "boss1": [
+      "\u001b[1;34;40m At last",
+      " I have travelled down the path of statues",
+      " And I now find myself at the gates of the monastery",
+      " But just as I prepare to open the doors and see what lies inside",
+      " I feel a hand lay down on my right shoulder",
+      " \"Not yet, Disciple. You have one more test to pass.\""
+    ],
+    "boss2": [
+      " \u001b[1;34;40mI turn around and see a man draped in bright red clothing, decorated with the images of a variety of animals",
+      " I recognize every single one of them as one of the statues I have encountered in this eventful beginning of my journey",
+      " In fact, all of them but one",
+      " Before I can get a closer look at it, the Master bows and blocks my view of the unfamiliar figure",
+      " \"You have stayed in our humble grove for so little time\"",
+      " \"And yet you have learned so much\"",
+      " \"It is now time to put all the knowledge you have acquired to the test\"",
+      " \"Please save your questions for later\"",
+      " \"And face me, the Master of the Autumn Monastery, Sculptor of Statues.\""
     ],
     "ending": {
       "text1": [

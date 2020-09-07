@@ -1,2 +1,2 @@
-test.py
-encounter*
+__pycache__
+tests

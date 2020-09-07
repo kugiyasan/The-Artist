@@ -1,172 +1,41 @@
 # AUTHOR: JULIEN ROBERT
 
 # crow as enemy, can discard any card in the hand
-# reshuffle doesn't remove inspiration (vs wolf, drawed swan)
+# reshuffle doesn't remove inspiration
 
-import json
 import random # Praise RNGesus
 import re
 import sys
 import time
 
-with open("dialogs.json") as jsonFile:
-    dialogs = json.load(jsonFile)
+from cards_and_enemies import *
+from fight import Fight
+from utils import *
 
 godmode = False
-
 if godmode:
     print("GODMODE IS ACTIVATED\n\n")
 
-room = 0
-HP = 20
+class Player():
+    def __init__(self):
+        self.HP = 20
+        self.maxHP = 24
+        self.discard_pile = []
+        self.world = 1
+        self.room = 0
+        self.next_event = 5
+
+        # Initial player's deck, will be modified after
+        self.draw_pile = [red, yellow, blue, dawn, beginning, beginning] + [canvas] * 7
+        random.shuffle(self.draw_pile) # initial shuffle
+
 honor = 0
 boss = 0
-
-def printLine():
-    # print("=" * 49)
-    # the line below will hide a lot of visual glitches,
-    # however I think it's a good practice to put back the default color in the json file
-    # that would also make it easier to remove the separator lines in the case of a more sophisticated ui
-    print("\u001b[1;37;40m" + "=" * 49)
-
-    # print("\u001b[1;37;40m")
-    # for _ in range(49):
-    #     sys.stdout.write("=")
-    #     sys.stdout.flush()
-    #     time.sleep(0.01)
-    
-    # print()
-
-class Card:
-    def __init__(self, name:str, val:int, effect="No effect.", heal=0, draw=0, discard=0, forget=0, use=False):
-        self.name = name # Nom de la carte
-        self.val = val # Valeur numérique de la carte
-        self.effect = effect # Effet de la carte
-        self.heal = heal
-        self.draw = draw
-        self.use = "\033[1;32;40m*\033[1;37;40m" if use else ""
-        self.discard = discard
-        self.forget = forget
-    def show(self):
-        if self.val > 0: #Valeurs positives en vert
-            color = 32
-        elif self.val == 0: #Valeurs de 0 en jaune
-            color = 33
-        else: #Valeurs négatives en rouge
-            color = 31
-        print(" {0.name} (\033[1;{1};40m{0.val}\033[1;37;40m) - {0.effect} {0.use}".format(self, color))
-
-
-hand = []
-discard = []
-
-handlength = 0
-
-shamed = Card("The Shamed", -2, "Flaw. No effect.")
-dusk = Card("The Dusk", -1, "Flaw. At the end of this combat, forget a random card in your hand and lose 1 HP.")
-
-desperate = Card("The Desperate", 0, "Flaw. No effect.")
-deceased = Card("The Deceased", -99, "Flaw. At the end of this combat, die.")
-
-# TODO change Flaw into an iterator, and call next() instead of .pop(0)
-Flaw = [shamed, dusk]
-random.shuffle(Flaw)
-Flaw.append(desperate)
-for x in range (50):
-    Flaw.append(deceased)
-
-red = Card("Red", 2)
-blue = Card("Blue", 0, "Heal 2 HP.", heal=2, use=True)
-yellow = Card("Yellow", 1, "Draw 1 card.", heal=0, draw=1, use=True)
-beginning = Card("The Beginning", 1)
-dawn = Card("The Dawn", 2, "Heal 2 HP. Draw 2 cards.", heal=2, draw=2, use=True)
-canvas = Card("The Canvas" , 0)
-
-tiger = Card("The Tiger", 0, "This card's value begins at 0, and increases by 1 for every 2 cards in your hand.")
-stag = Card("The Stag", -5, "This card's value increases by 1 for every card in your hand.")
-dragon = Card ("The Dragon", 4)
-snake = Card("The Snake", 0, "Reusable. Lose 1 HP. For this combat, this card's value increases by 1.", use=True)
-rabbit = Card ("The Rabbit", 0, "Discard 2 cards. Draw 2 cards.", draw=2, discard=2, use=True)
-leopard = Card("The Leopard", 1, "Draw 1 card.", draw=1, use=True)
-swan = Card("The Swan", 0, "This card value's is 0. If this is the only card in your hand, the value of this card becomes 4.")
-crane = Card("The Crane", -2, "This card's value increases by 2 for every card with a negative value in your hand.")
-turtle = Card ("The Turtle", 1, "At the end of this combat, put this card back in your draw pile.")
-mantis = Card ("The Mantis",2,"Heal 1 HP.", heal=1, use=True)
-wolf = Card("The Wolf", 3, "Forget 1 card.", forget=1, use=True)
-monkey = Card("The Monkey", 2,"If the enemy you are facing has a might value equal to or greater than 10, gain 1 bonus inspiration when this card is drawn.")
-spider = Card("The Spider", 3, "At the end of this combat, lose 2 HP.")
-crow = Card("The Crow", 2, "Discard 1 card.", discard=1, use=True)
-frog = Card("The Frog", 0, "Forget 1 card.", forget=1, use=True)
-
-acolyte = Card("The Acolyte", 2, "While this card is in your hand, increase the value of all cards containing the name of an animal by 1.")
-master = Card("The Acolyte", 2, "While this card is in your hand, increase the value of all cards containing the name of an animal by 1.")
-
-# Deck du joueur initial, sera modifié par après
-pile = [red, yellow, blue, dawn, beginning, beginning] + [canvas] * 7
-random.shuffle(pile) # shuffle initial
-
-animalpool = [tiger, stag, dragon, snake, rabbit, leopard, swan, crane, turtle, mantis, wolf, monkey, spider, crow, frog]
 
 monkeycom = False #effet de l'ennemi monkey
 moncom = False #effet de la carte monkey
 
-class Enemy:
-    def __init__(self, name, val, draw, effect, reward, desc=None):
-        self.name = name
-        self.val = val # val can be a int or a str
-        self.effect = effect
-        self.draw = draw
-        self.reward = reward
-        
-        if not desc:
-            shortName = name[4:].lower()
-            self.desc = "\n ".join(dialogs["enemies"][shortName])
-        else:
-            self.desc = desc
-
-    def show(self):
-        printLine()
-        stats = """\033[1;36;40m {0.name}\033[1;37;40m
-        Might: \033[1;31;40m{0.val}\033[1;37;40m
-        Inspiration: \033[1;32;40m{0.draw}\033[1;37;40m
-        Effects: \033[1;33;40m{0.effect}\033[1;37;40m
-        
-        \033[1;34;40mREWARD:\033[1;37;40m
-        """.strip().format(self)
-        stats = re.sub("\n +", "\n ", stats)
-        print(stats)
-        self.reward.show()
-
-    def introduce(self):
-        printLine()
-        print("\033[1;34;40m" + self.desc)
-        printLine()
-
-
-# TODO each enemy should be derived from the Enemy class, and they should implement the fight mechanic themselves
-#might, inspiration
-tigerE = Enemy("The Tiger", 4, 4, "No effects.", tiger)
-swanE = Enemy("The Swan", 0, 0, "No effects.", swan)
-dragonE = Enemy("The Dragon", 10, 5, "Each card in your hand adds 1 to your total might.", dragon)
-craneE = Enemy("The Crane", 0, 1, "This enemy's might is equal to the number of Flaw cards you have in your deck.", crane)
-leopardE = Enemy("The Leopard", 2, 3, "You may not have more than 3 cards in your hand. Exceeding this limit will cause a random card to be discarded.", leopard)
-snakeE = Enemy("The Snake", 1, 1, "No effects.", snake)
-monkeyE = Enemy("The Monkey", "?", 1, "This enemy's might is equal to the value of a random card taken away from your deck. The card will be put back at the end of the combat.",monkey)
-stagE = Enemy("The Stag", 2, 3, "No effects.", stag)
-mantisE = Enemy("The Mantis", 3, 3, "Each unused point of inspiration after this combat heals you for 1 HP.", mantis)
-wolfE = Enemy("The Wolf", 4, 4, "If you lose this combat, forget a random card in your hand.", wolf)
-rabbitE = Enemy("The Rabbit",0,0,"No effects.", rabbit)
-turtleE = Enemy ("The Turtle",2,2,"No effects.",turtle)
-spiderE = Enemy("The Spider",0,0,"No effects.",spider)
-crowE = Enemy("The Crow", 2,3,"Whenever you use the active effect of a card, discard it.",crow)
-frogE = Enemy("The Frog", 1,1,"No effects.",frog)
-fight1pool = [tigerE, swanE, dragonE, craneE, leopardE, snakeE, monkeyE, stagE, mantisE, wolfE, rabbitE, turtleE,spiderE,crowE,frogE]
-
-acolyteE = Enemy("The Acolyte", 8,5, "Every card in your hand which contains the name of an animal increases your total might by 1.", acolyte, "\033[1;34;40m \"I can see that the notion of rest is alien to you\"\n \"For you, every situation is yet another painting waiting to be created, is it not?\"\n \"My apologies, dear Artist, but a sketch of me is not granted\"\n \"It is earned.\"\n I open my sketchbook at its first page, as the Acolyte takes on her battle stance.")
-master1 = Enemy("The Master \033[1;37;40m(\033[1;32;40m███\033[1;37;40m)", 8, 5, "Every card in your hand which contains the name of an animal increases The Master's total might by 1.", master, "\n \033[1;31;40mROUND 1\n\n \033[1;34;40m\"Each statue I have carved possesses a soul of its own.\"\n \"However, I am, and will always will be their Master\"\n \"To begin your final test, let us see if you have memorized their lessons.\"")
-master2 = Enemy("The Master \033[1;37;40m(\033[1;32;40m██\033[1;31;40m█\033[1;37;40m)", 4, 1, "At the end of this combat, heal 1 HP for every point of might exceeding the required total.", master, "\n \033[1;31;40mROUND 2\n\n \033[1;34;40m\"This next battle should be much easier, now that you have acquainted yourself with my fighting style.\"\n \"However, make sure to keep painting to the best of your ability!\"\n \"I like to grant a special reward to disciples who truly manage to exceed my expectations.\"")
-master3 = Enemy("The Master \033[1;37;40m(\033[1;32;40m█\033[1;31;40m██\033[1;37;40m)", 10, 3, "At the start of this combat, gain 1 inspiration for every Flaw present in your deck.", master, "\n \033[1;31;40mFINAL ROUND\n\n \033[1;34;40m\"It is time. Show me the true colors of your power!\"\n \"I wish to see every work of art you have crafted in my grove.\"\n \"Even the worst Flaws can be turned into something beautiful by the most proficient students!\"")
-
+player = Player()
 
 def mainmenu():
     while True:
@@ -228,7 +97,70 @@ def Monastery():
     print("\n".join(dialogs["monastery"]["intro"]))
     printLine()
     input(dialogs["pause"])
-    EncounterM()
+    # EncounterM()
+
+    printLine()
+    print("\n".join(dialogs["monastery"]["first_battle"]))
+    printLine()
+
+    for _ in range(4):
+        enemy = choose_opponent()
+        fight = Fight(player, enemy)
+        fight.fight()
+        player.room += 1
+
+        printLine()
+        print("\n".join(dialogs["monastery"]["interlude1"]))
+        printLine()
+
+    # choose opponent and fight
+
+    # Accolyte
+    # choose one of the three options
+
+    for _ in range(4):
+        choose_opponent()
+        print("between two fights")
+
+    # choose opponent and fight
+
+    for i in range(3):
+        pass
+        # fight boss at phase i
+
+    print("Exiting the monastery")
+
+def choose_opponent():
+    print(f"\n Paintings remaining before next event: \033[1;33;40m{player.next_event - player.room}\033[1;37;40m\n")
+    input(dialogs["pause"])
+
+    random.shuffle(fight1pool)
+    x = fight1pool[0]
+    y = fight1pool[1]
+
+    printLine()
+    print(x.stats)
+    print(x.reward.description)
+    
+    printLine()
+    print(y.stats)
+    print(y.reward.description)
+
+    printLine()
+    print("[1] "+ x.name)
+    print("[2] " + y.name)
+    encount1 = input("\033[1;37;40m Please enter the number corresponding to your choice to proceed:\n")
+
+    if encount1 in ("1", "2"):
+        encount1 = int(encount1) - 1
+    else:
+        printLine()
+        print(" Error: Invalid option selected. Selecting random encounter...")
+        encount1 = random.randint(0, 1)
+
+    return fight1pool.pop(encount1)
+    # fight = Encounter(fight1pool[encount1], "Monastery")
+    # fight.Fight()
         
 def Observatory():
     printLine()
@@ -246,9 +178,6 @@ def Hive():
     raise NotImplementedError
     # Encounter()
 
-def CardValueSort(sort): #Pour trier les cartes de la pile dans forget
-    return sort.val
-
 class Encounter:
     def __init__ (self, enemy, location):
         self.enemy = enemy
@@ -256,19 +185,20 @@ class Encounter:
     def Fight(self):
         global pile
         global discard
-        global hand
+        # global hand
+        hand = []
         global boss
         global handlength
-        self.enemy.introduce()
+        print(self.enemy.stats)
         printLine()
         input(dialogs["pause"])
-        insp = self.enemy.draw
+        insp = self.enemy.numberOfInsp
         global HP
         global honor
         global room
         global monkeycom
         global moncom
-        room += 1
+        player.room += 1
         mastercom = False
 
         # ! every animal / enemy specific thing should go in their respective class, here it will be the generic fight logic, inherited by the animals
@@ -437,17 +367,11 @@ class Encounter:
                         continue
                 else:
                     printLine()
-                    print("\033[1;34;40m I have turned the final page of my sketchbook")
-                    print(" Now is a good opportunity to add the new drawings I have learned")
-                    print(" In the last few steps of my journey")
-                    print(" But in the murky depths of my soul")
-                    print(" Something which I have been struggling to conceal")
-                    print(" Emerges from the darkness")
-                    print(" And finds its way into my sketchbook")
+                    print(dialogs["fight"]["reshuffle"])
                     printLine()
                     pile += discard
                     discard.clear()
-                    ohno = Flaw.pop(0)
+                    ohno = next(flaw_pile)
                     pile.append(ohno)
                     random.shuffle(pile)
                     input("\n Press enter to continue.\n")
@@ -517,7 +441,7 @@ class Encounter:
                 else:
                     print("\n You have lost \033[1;33;40m"+str(self.enemy.val-dam)+ "\033[1;37;40m health points. Your current health is \033[1;33;40m"+str(HP)+"\033[1;37;40m.")
                 input("\n Press enter to continue.\n")
-                hand.sort(key=CardValueSort)
+                hand.sort(key=lambda s: s.val)
                 forget = (self.enemy.val-dam)
                 while forget > 0:
                     if choice == "The " or len(hand) == 0:
@@ -696,7 +620,7 @@ class Encounter:
                                 printLine()
                                 pile += discard
                                 discard.clear()
-                                ohno = Flaw.pop(0)
+                                ohno = next(flaw_pile)
                                 pile.append(ohno)
                                 random.shuffle(pile)
                                 input("\n Press enter to continue.\n")
@@ -756,15 +680,18 @@ def EncounterM():
                 if "Flaw" in o.effect:
                     craneE.val +=1
         printLine()
-        print("\033[1;34;40m As my first steps scatter the red leaves across the soil")
-        print(" I find myself inspired by the statues surrounding the trail")
-        print(" Surely they would not mind appearing in a painting or two")
-        print(" Who shall I paint first?\033[1;37;40m")
+        print(dialogs["monastery"]["first_battle"])
         printLine()
         print("\n Paintings remaining before next event: \033[1;33;40m5\033[1;37;40m\n")
         input(dialogs["pause"])
-        x.show()
-        y.show()
+
+        printLine()
+        print(x.stats)
+        print(x.reward.description)
+        printLine()
+        print(y.stats)
+        print(y.reward.description)
+
         printLine()
         print("[1] "+ x.name)
         print("[2] " + y.name)
@@ -805,10 +732,7 @@ def EncounterM():
         v = x.name
         w = y.name
         printLine()
-        print("\033[1;34;40m I continue my path towards the monastery")
-        print(" Breathing calmly the fresh air of the forest")
-        print(" Perhaps I should enjoy this moment of peace")
-        print(" And paint a few more statues along the way.\033[1;37;40m")
+        print(dialogs["monastery"]["interlude1"])
         printLine()
         print("\n Paintings remaining before next event: \033[1;33;40m"+str(5-room)+"\033[1;37;40m\n")
         input(dialogs["pause"])
@@ -1050,24 +974,11 @@ def EncounterM():
     elif room == 11:
         boss = 1
         printLine()
-        print("\033[1;34;40m At last")
-        print(" I have travelled down the path of statues")
-        print(" And I now find myself at the gates of the monastery")
-        print(" But just as I prepare to open the doors and see what lies inside")
-        print(" I feel a hand lay down on my right shoulder")
-        print(" \"Not yet, Disciple. You have one more test to pass.\"")
+        print("\n".join(dialogs["monastery"]["boss1"]))
         printLine()
         input(dialogs["pause"])
         printLine()
-        print(" \033[1;34;40mI turn around and see a man draped in bright red clothing, decorated with the images of a variety of animals")
-        print(" I recognize every single one of them as one of the statues I have encountered in this eventful beginning of my journey")
-        print(" In fact, all of them but one")
-        print(" Before I can get a closer look at it, the Master bows and blocks my view of the unfamiliar figure")
-        print(" \"You have stayed in our humble grove for so little time\"")
-        print(" \"And yet you have learned so much\"")
-        print(" \"It is now time to put all the knowledge you have acquired to the test\"")
-        print(" \"Please save your questions for later\"")
-        print(" \"And face me, the Master of the Autumn Monastery, Sculptor of Statues.\"")
+        print("\n".join(dialogs["monastery"]["boss2"]))
         printLine()
         input(" Press enter to open your sketchbook and FIGHT.\n")
         fight = Encounter(master1, "Monastery")
@@ -1090,7 +1001,7 @@ def ending():
 
     # You can do 0 > honor > 3 in python, but I don't recommand, 
     # since other languages will execute this from left to right
-    # so 0 > honor will return, and then true > 3 will be executed, which isn't what we want
+    # so 0 > honor will return true, and then true > 3 will be executed, which isn't what we want
     if honor < 0 or honor > 3:
         raise GameError("You're not supposed to have more than 3 honor points")
 
