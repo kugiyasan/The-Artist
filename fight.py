@@ -26,7 +26,7 @@ class Fight():
 
     def fight_info(self):
         text = f" Your current might is \033[1;31;40m{self.hand_damage}\033[1;37;40m/\033[1;31;40m{self.enemy.HP}\033[1;37;40m."
-        text += f"\n Your current health is \033[1;33;40m{self.player.HP}\033[1;37;40m/\033[1;33;40m24\033[1;37;40m."
+        text += f"\n Your current health is \033[1;33;40m{self.player.HP}\033[1;37;40m/\033[1;33;40m{self.player.maxHP}\033[1;37;40m."
 
         plural_draw_pile = "s" if len(self.player.draw_pile) > 1 else ""
         plural_discard_pile = "s" if len(self.player.discard_pile) > 1 else ""
@@ -78,14 +78,15 @@ class Fight():
 
     def _draw_card(self):
         if len(self.player.draw_pile) == 0:
-            printLine()
-            print("\n".join(dialogs["fight"]["reshuffle"]))
-            printLine()
-
             if len(self.player.discard_pile) == 0:
-                print(dialogs["fight"]["no_card"])
+                print("\n".join(dialogs["fight"]["no_card"]))
                 input(dialogs["gameover"])
                 exit()
+
+            printLine()
+            print("\n".join(dialogs["fight"]["reshuffle"]))
+            printLine("\n")
+            input(dialogs["pause"])
 
             self.player.draw_pile = self.player.discard_pile[:]
             self.player.discard_pile = []
@@ -100,7 +101,7 @@ class Fight():
         print(self.enemy.reward.description)
         printLine()
         print(self.show_hand())
-        
+
         difference = self.enemy.HP - self.hand_damage
         self.player.HP -= difference
         HPplural = "s" if difference > 1 else ""
@@ -113,18 +114,55 @@ class Fight():
         self.forget_cards(difference)
 
     def forget_cards(self, repeat):
-        cards_to_forget = ""
+        card_to_forget = ""
 
-        while cards_to_forget != "exit" or repeat <= 0:
+        while card_to_forget != "exit" and repeat > 0:
             print(dialogs["fight"]["forget_cards"])
             print(self.show_hand())
-            cards_to_forget = input("\n".join(dialogs["fight"]["forget_cards_prompt"]).format(repeat))
+            if len(self.hand) == 0:
+                break
 
-            repeat -= 1
+            card_to_forget = input(
+                "\n".join(dialogs["fight"]["forget_cards_prompt"]).format(repeat))
+
+            for card in self.hand:
+                if card.short_name == card_to_forget:
+                    # TODO handle flaw card as x2
+                    self.hand.remove(card)
+                    repeat -= 1
+                    break
 
         printLine()
         print(dialogs["fight"]["forget_end"])
+        printLine("\n")
         input(dialogs["pause"])
+
+    def discard_cards(self, repeat):
+        card_to_discard = ""
+
+        #? Should we let the user exit a discard move?
+        while card_to_discard != "exit" and repeat > 0:
+            printLine()
+            print(self.show_hand())
+            if len(self.hand) == 0:
+                break
+
+            plural = "s" if repeat > 1 else ""
+            print(
+                f"\n You may discard \033[1;33;40m{repeat}\033[1;37;40m more card{plural}.\n")
+            printLine()
+
+            card_to_discard = input(
+                " Type the name of the card you wish to discard.\n")
+
+            for card in self.hand:
+                if card.short_name == card_to_discard:
+                    self.hand.remove(card)
+                    self.player.discard_pile.append(card)
+                    repeat -= 1
+                    break
+            else:
+                print(dialogs["monastery"]["fight"]["discard_error"])
 
     def fight(self):
         printLine()
@@ -141,7 +179,7 @@ class Fight():
 
             if self.hand_damage >= self.enemy.HP:
                 self.battle_won()
-                return
+                break
 
             printLine("\n")
             print(self.fight_info())
@@ -150,8 +188,16 @@ class Fight():
             if abandoned:
                 break
 
+            for card in self.hand:
+                card.at_turn_update(self.hand)
+
+        # End of the battle
+        self.player.discard_pile.extend(self.hand)
+        for card in self.hand:
+            card.at_fight_end(self.hand, self.player)
+
     def battle_won(self):
         print(dialogs["fight"]["win"].format(self.enemy.name))
         input(dialogs["pause"])
 
-        self.player.discard_pile.extend(self.hand)
+        self.player.discard_pile.append(self.enemy.reward)

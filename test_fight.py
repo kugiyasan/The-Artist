@@ -6,6 +6,8 @@ from io import StringIO
 import unittest
 from TheArtist import *
 
+random.seed(69420)
+
 @contextmanager
 def captured_output():
     new_out, new_err = StringIO(), StringIO()

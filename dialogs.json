@@ -57,12 +57,23 @@
       " Type \"exit\" to quit the forgetting phase.\n"
     ],
     "forget_end": "\u001b[1;34;40m Now that my spirit feels lightened, I am ready to resume my journey.",
+    "discard_error": " Error: Invalid card name selected. Please type the name of the card you wish to discard(ex: \"The Canvas\" or \"canvas\"). The card must be in your current hand (shown below).",
     "death": [
       "\u001b[1;34;40m My mind is pained with the struggle of creativity",
       " I keep looking for something new to paint, but nothing comes to mind",
       " Perhaps this dream was all for naught",
       " Perhaps I was never meant to be an artist",
       " It is now time to wake up",
+      " I open my eyes",
+      " And find myself sitting still",
+      " With an empty canvas standing before me"
+    ],
+    "death2": [
+      " \u001b[1;34;40mThis creature is far too strong",
+      " My artistic prowess is incapable of impressing it",
+      " I feel like every single one of my thoughts",
+      " Is being absorbed into a bottomless void",
+      " I see it is time to wake up at last",
       " I open my eyes",
       " And find myself sitting still",
       " With an empty canvas standing before me"
@@ -110,6 +121,60 @@
       " Perhaps I should enjoy this moment of peace",
       " And paint a few more statues along the way.\u001b[1;37;40m"
     ],
+    "interlude2": [
+      "\u001b[1;34;40m With every step I take, the monastery grows closer",
+      " Soon, I shall meet the Master, and put all I have learned to the test",
+      " If I succeed",
+      " I am certain that great insight will be granted upon me",
+      " For now, I cannot resist attempting to paint a few more of these beautiful statues."
+    ],
+    "acolyte": {
+      "text1": [
+        "\u001b[1;34;40m I have reached the middle of my journey in the Autumn Monastery",
+        " I have encountered some of its denizens, and I shall surely see a few more before arriving at my destination",
+        " My mind is flowing with ideas for new sketches",
+        " But my body is feeling tired and exhausted",
+        " Perhaps some rest is in order",
+        " I notice two stone benches standing aside the path, make myself comfortable, and begin breathing calmly",
+        " Crimson leaves fall all around me, and small rays of light piercing through the foliage illuminate the scenery",
+        " A monk dressed in bright red garnments exits the monastery, and begins walking down the path towards me",
+        " She sits on the second bench, closes her eyes, and speaks",
+        " \"You have done well, Disciple of the Master\"",
+        " \"You have seen five of our guardians, and learned that not all things are meant to be kept forever\"",
+        " \"You seek inspiration at the very bottom of your dreams, correct?\"",
+        " \"The dangers standing in your path are not trivial\"",
+        " \"But you need not worry about that for now. Breathe, and rest.\""
+      ],
+      "breathe": [
+        "\u001b[1;34;40m \"Excellent. Feel the air traverse your lungs. Be refreshed, Disciple.\"",
+        " \"Alas, not all things are meant to last forever, as you have learned\"",
+        " \"Our Master is eager to put you to the test\"",
+        " \"May you remember all we have taught you as you journey onwards\"",
+        " I turn to look at the monk and say goodbye, but she has already disappeared."
+      ],
+      "fight": [
+        "\u001b[1;34;40m \"Is simply resting so difficult for you?\"",
+        " \"I see an Artist's mind never slumbers\"",
+        " \"Very well then\"",
+        " \"I am eager to see how this dedication will help you in the rest of your journey\"",
+        " I turn to look at the monk and say goodbye, but she has already disappeared."
+      ],
+      "hesitation": [
+        "\u001b[1;34;40m \"You don't know what to choose?\"",
+        " \"I understand. In such a foreign land, so far away from home...\"",
+        " \"Finding rest can be rather difficult\"",
+        " \"Here, compare your breathing with a flower\"",
+        " \"Opening and closing itself as the day and night chase each other\"",
+        " \"Excellent.\"",
+        " After practicing the monk's exercise for a few minutes, I turn my head to thank her, but she has already disappeared."
+      ],
+      "ending": [
+        "\u001b[1;34;40m After this rather enriching encounter with my first human being in this strange land",
+        " I leave the stone bench behind, grateful for this opportunity to stop for a moment",
+        " It is time to press on",
+        " And paint a few more statues along the way.\u001b[1;37;40m"
+      ]
+    },
     "boss1": [
       "\u001b[1;34;40m At last",
       " I have travelled down the path of statues",
@@ -349,19 +414,19 @@
       " I open my sketchbook at its first page, as the Acolyte takes on her battle stance."
     ],
     "master1": [
-      " \u001b[1;31;40mROUND 1\n",
+      " \n\u001b[1;31;40mROUND 1\n",
       " \u001b[1;34;40m\"Each statue I have carved possesses a soul of its own.\"",
       " \"However, I am, and will always will be their Master\"",
       " \"To begin your final test, let us see if you have memorized their lessons.\""
     ],
     "master2": [
-      " \u001b[1;31;40mROUND 2\n",
+      " \n\u001b[1;31;40mROUND 2\n",
       " \u001b[1;34;40m\"This next battle should be much easier, now that you have acquainted yourself with my fighting style.\"",
       " \"However, make sure to keep painting to the best of your ability!\"",
       " \"I like to grant a special reward to disciples who truly manage to exceed my expectations.\""
     ],
     "master3": [
-      " \u001b[1;31;40mFINAL ROUND\n",
+      " \n\u001b[1;31;40mFINAL ROUND\n",
       " \u001b[1;34;40m\"It is time. Show me the true colors of your power!\"",
       " \"I wish to see every work of art you have crafted in my grove.\"",
       " \"Even the worst Flaws can be turned into something beautiful by the most proficient students!\""

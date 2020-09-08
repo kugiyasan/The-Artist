@@ -12,7 +12,7 @@ from utils import *
 
 class Player():
     def __init__(self):
-        self.HP = 20
+        self.__HP = 20
         self.maxHP = 24
         self.discard_pile = []
         self.world = 1
@@ -21,12 +21,23 @@ class Player():
 
         # Initial player's deck, will be modified after
         self.draw_pile = [red, yellow, blue, dawn, beginning, beginning] + [canvas] * 7
+        # self.draw_pile = [god] * 3
+        # self.draw_pile = [crow] * 10
         random.shuffle(self.draw_pile) # initial shuffle
 
         # honor = 0
 
         # monkeycom = False #effet de l'ennemi monkey
         # moncom = False #effet de la carte monkey
+    
+    @property
+    def HP(self):
+        return self.__HP
+
+    @HP.setter
+    def HP(self, value):
+        self.__HP = min(value, self.maxHP)
+        
 
 def mainmenu():
     while True:
@@ -84,57 +95,49 @@ def intro():
         Observatory()
 
 def Monastery():
-    printLine()
-    print("\n".join(dialogs["monastery"]["intro"]))
-    printLine()
-    input(dialogs["pause"])
-    # EncounterM()
+    # printLine()
+    # print("\n".join(dialogs["monastery"]["intro"]))
+    # printLine()
+    # input(dialogs["pause"])
+    # # EncounterM()
 
-    printLine()
-    print("\n".join(dialogs["monastery"]["first_battle"]))
-    printLine()
+    # printLine()
+    # print("\n".join(dialogs["monastery"]["first_battle"]))
+    # printLine()
 
-    for _ in range(4):
-        print(f"\n Paintings remaining before next event: \033[1;33;40m{player.next_event - player.room}\033[1;37;40m\n")
-        input(dialogs["pause"])
+    # for i in range(5):
+    #     print(f"\n Paintings remaining before next event: \033[1;33;40m{player.next_event - player.room}\033[1;37;40m\n")
+    #     input(dialogs["pause"])
 
-        enemy = choose_opponent()
-        fight = Fight(player, enemy)
-        fight.fight()
-        player.room += 1
+    #     enemy = choose_opponent()
+    #     fight = Fight(player, enemy)
+    #     fight.fight()
+    #     player.room += 1
 
-        printLine()
-        print("\n".join(dialogs["monastery"]["interlude1"]))
-        printLine()
+    #     if i != 4:
+    #         printLine()
+    #         print("\n".join(dialogs["monastery"]["interlude1"]))
+    #         printLine()
 
-    # choose opponent and fight
+    # EncounterAcolyte()
+    # player.room += 1
+    # player.next_event = 11
 
-    # Accolyte
-    # choose one of the three options
+    # for i in range(5):
+    #     print(f"\n Paintings remaining before meeting the Master: \033[1;33;40m{player.next_event - player.room}\033[1;37;40m\n")
+    #     input(dialogs["pause"])
 
-    for _ in range(4):
-        choose_opponent()
-        print("between two fights")
+    #     enemy = choose_opponent()
+    #     fight = Fight(player, enemy)
+    #     fight.fight()
+    #     player.room += 1
 
-    # choose opponent and fight
+    #     if i != 4:
+    #         printLine()
+    #         print("\n".join(dialogs["monastery"]["interlude2"]))
+    #         printLine()
 
-    # Bossfight
-    printLine()
-    print("\n".join(dialogs["monastery"]["boss1"]))
-    printLine()
-    input(dialogs["pause"])
-    printLine()
-    print("\n".join(dialogs["monastery"]["boss2"]))
-    printLine()
-    input(" Press enter to open your sketchbook and FIGHT.\n")
-
-    fight = Encounter(master1, "Monastery")
-    fight.Fight()
-    fight = Encounter(master2, "Monastery")
-    fight.Fight()
-    fight = Encounter(master3, "Monastery")
-    fight.Fight()
-
+    Bossfight()
     ending()
 
 def choose_opponent():
@@ -164,11 +167,118 @@ def choose_opponent():
 
     return fight1pool.pop(encount1)
 
+def EncounterAcolyte():
+    printLine()
+    print("\n".join(dialogs["monastery"]["acolyte"]["text1"]))
+    printLine()
+
+    plural_draw_pile = "s" if len(player.draw_pile) > 1 else ""
+
+    print(f" Your current health is \033[1;33;40m{player.HP}\033[1;37;40m/\033[1;33;40m{player.maxHP}\033[1;37;40m.")
+    print("[1] \033[1;32;40mBreathe\033[1;37;40m (Heal 5 HP)")
+    print("[2] \033[1;31;40mDraw\033[1;37;40m (Challenge the Acolyte)")
+    print(f"[3] \033[1;36;40mReflect\033[1;37;40m (Shuffle your discard pile back into your draw pile without adding a \033[1;31;40mFlaw\033[1;37;40m, and forget up to 3 cards in your deck. You currently have \033[1;33;40m{len(player.draw_pile)} \033[1;37;40mcard{plural_draw_pile} remaining in your draw pile.)")
+    printLine()
+    eventchoice = input(" Please enter the number corresponding to your choice to proceed:\n")
+    if eventchoice == "1":
+        printLine()
+        print("\n".join(dialogs["monastery"]["acolyte"]["breathe"]))
+        printLine()
+        player.HP += 5
+        print(f" You have gained 5 health points. Your current health is \033[1;33;40m{player.HP}\033[1;37;40m/\033[1;33;40m{player.maxHP}\033[1;37;40m.")
+        input(dialogs["pause"])
+    elif eventchoice == "2": # Combattre le Acolyte
+        fight = Fight(player, acolyteE)
+        fight.fight()
+    elif eventchoice == "3":
+        player.draw_pile.extend(player.discard_pile)
+        player.discard_pile = []
+        
+        forget = 3
+        choice = ""
+        while choice != "exit" and forget > 0:
+            print("\033[1;34;40m\n As I listen to the bright red leaves hitting the soil, I lose myself in my thoughts.\033[1;37;40m")
+            for card in player.draw_pile:
+                print(card.description)
+
+            plural = "s" if forget > 1 else ""
+            choice = input(f"\n Type the name of the card you wish to forget. You may forget \033[1;33;40m{forget}\033[1;37;40m more card{plural}. Forgetting a \033[1;31;40mFlaw\033[1;37;40m counts for 2 removed cards. Type \"exit\" to quit the forgetting phase.\n")
+            choice = choice.lower()
+            
+            for card in player.draw_pile:
+                if choice == card.short_name:
+                    player.draw_pile.remove(card)
+                    #! should create a flaw variable in Card
+                    if "Flaw" in card.effect and forget > 1:
+                        forget -= 2
+                    else:
+                        printLine()
+                        print(" Error: You do not have enough cards left to forget to select a \033[1;31;40mFlaw\033[1;37;40m!")
+                        printLine()
+                    break
+            else:
+                printLine()
+                print(" Error: Invalid card name selected. Please type the name of the card you wish to forget(ex: \"canvas\"). The card must be in your current hand (shown below).")
+                printLine()
+                
+        printLine()
+        print("\n".join(dialogs["monastery"]["acolyte"]["fight"]))
+        printLine()
+        player.room += 1
+        input(dialogs["pause"])
+        EncounterM()
+    else:
+        printLine()
+        print("\n".join(dialogs["monastery"]["acolyte"]["hesitation"]))
+        printLine()
+        player.HP += 5
+        print(f" You have gained 5 health points. Your current health is \033[1;33;40m{player.HP}\033[1;37;40m/\033[1;33;40m{player.maxHP}\033[1;37;40m.")
+        input(dialogs["pause"])
+
+    printLine()
+    print("\n".join(dialogs["monastery"]["acolyte"]["ending"]))
+    printLine()
+    
+
+def Bossfight():
+    printLine()
+    print("\n".join(dialogs["monastery"]["boss1"]))
+    printLine()
+    input(dialogs["pause"])
+    printLine()
+    print("\n".join(dialogs["monastery"]["boss2"]))
+    printLine()
+    input(" Press enter to open your sketchbook and FIGHT.\n")
+
+    # fight = Encounter(master1, "Monastery")
+    # fight.Fight()
+    # fight = Encounter(master2, "Monastery")
+    # fight.Fight()
+    # fight = Encounter(master3, "Monastery")
+    # fight.Fight()
+
+    dialogs["fight"]["win"] = "\033[1;34;40m\n \"Excellent work, disciple! However, I am only getting started...\"\033[1;37;40m"
+    dialogs["fight"]["abandon"] = "\033[1;34;40m \"Hmm, this is concerning. Perhaps you just weren't warmed up yet.\""
+    fight = Fight(player, master1)
+    fight.fight()
+
+    dialogs["fight"]["win"] = "\033[1;34;40m\n \"How splendid! It seems you are ready for your true ultimate trial.\"\033[1;37;40m"
+    dialogs["fight"]["abandon"] = "\033[1;34;40m \"What is this? Gather your equipment, and prove that you are worthy of my teachings!\""
+    fight = Fight(player, master2)
+    fight.fight()
+
+    dialogs["fight"]["win"] = "\033[1;34;40m\n \"Absolutely outstanding! Please follow me inside the monastery, and we shall discuss about your performance.\"\033[1;37;40m"
+    dialogs["fight"]["abandon"] = "\033[1;34;40m \"This final trial was intended to be difficult. I am disappointed, but not surprised. Follow me inside the monastery, and we shall discuss of your performance.\""
+    fight = Fight(player, master3)
+    fight.fight()
+
 def ending():
     printLine()
     print("\n".join(dialogs["monastery"]["ending"]["text1"]))
     printLine()
     input(" Press enter to receive the results of your evaluation.\n")
+
+    honor = 3
 
     # You can do 0 > honor > 3 in python, but I don't recommand, 
     # since other languages will execute this from left to right
@@ -219,42 +329,14 @@ class Encounter:
         self.enemy = enemy
         self.location = location
     def Fight(self):
-        global pile
-        global discard
-        # global hand
         hand = []
-        global handlength
-        print(self.enemy.stats)
-        printLine()
-        input(dialogs["pause"])
-        insp = self.enemy.number_of_insp
-        global HP
-        global honor
-        global room
-        global monkeycom
-        global moncom
-        player.room += 1
-        mastercom = False
-
+        discard = []
+        pile = []
         # ! every animal / enemy specific thing should go in their respective class, here it will be the generic fight logic, inherited by the animals
         while True:
             dam = 0
             handlength = len(hand)
             ############################################################################################### EFFETS DÉPART
-            tiger.val = handlength // 2 # tiger effect
-            stag.val = -5
-            stag.val += handlength
-            crane.val = -2
-            acolyte.val = 2
-            if len(hand) == 1:
-                swan.val = 4
-            else:
-                swan.val = 0
-            for o in hand:
-                if o.val < 0 and o.name != "The Crane":
-                    crane.val += 2
-                else:
-                    continue
             if self.enemy.name == "The Dragon":
                 dam += handlength
             if self.enemy.name == "The Leopard":
@@ -297,22 +379,7 @@ class Encounter:
                 insp += 1
                 moncom = True
             ############################################################################################### EFFETS DÉPART
-            #! how is it possible to get above the max?
-            # if HP > 24:
-            #     HP = 24
-            # for x in hand:
-            #     dam += x.val
-            # if godmode == True:
-            #     dam = 999
             if dam >= self.enemy.val:
-            #     self.enemy.show()
-            #     printLine()
-            #     for x in hand:
-            #         x.show()
-            #         if x.use != "- \033[1;31;40mUSED\033[1;37;40m" and ("Heal" in x.effect):
-            #             HP += x.heal
-            #         x.use = ""
-            #     # if boss == 0:
             #     discard.append(self.enemy.reward)
                 ############################################################################################### EFFETS VICTOIRE
                 if spider in hand:
@@ -389,16 +456,9 @@ class Encounter:
                         HP -= 1
                         if HP <= 0:
                             printLine()
-                            print("\033[1;34;40m My mind is pained with the struggle of creativity")
-                            print(" I keep looking for something new to paint, but nothing comes to mind")
-                            print(" Perhaps this dream was all for naught")
-                            print(" Perhaps I was never meant to be an artist")
-                            print(" It is now time to wake up")
-                            print(" I open my eyes")
-                            print(" And find myself sitting still")
-                            print(" With an empty canvas standing before me")
+                            print("\n".join(dialogs["fight"]["death"]))
                             printLine()
-                            input(" Game over. Press enter to terminate the program.\n")
+                            input(dialogs["gameover"])
                             exit()
                         continue
                 else:
@@ -421,15 +481,9 @@ class Encounter:
                         printLine()
                     if len(pile)+len(hand)+len(discard) == 0:
                         printLine()
-                        print(" \033[1;34;40mMy sketchbook is somehow empty")
-                        print(" Returned to nothing")
-                        print(" As consequence for my destructive whims")
-                        print(" Nothing can be done now")
-                        print(" I open my eyes")
-                        print(" And find myself sitting still")
-                        print(" With an empty canvas standing before me")
+                        print("\n".join(dialogs["fight"]["no_card"]))
                         printLine()
-                        input(" Game over. Press enter to terminate the program.\n")
+                        input(dialogs["gameover"])
                         exit()
             elif choice == "forget" or choice == "f":
                 HP -= (self.enemy.val-dam)
@@ -460,18 +514,11 @@ class Encounter:
                     x.use = ""
                 if HP <= 0:
                     printLine()
-                    print(" \033[1;34;40mThis creature is far too strong")
-                    print(" My artistic prowess is incapable of impressing it")
-                    print(" I feel like every single one of my thoughts")
-                    print(" Is being absorbed into a bottomless void")
-                    print(" I see it is time to wake up at last")
-                    print(" I open my eyes")
-                    print(" And find myself sitting still")
-                    print(" With an empty canvas standing before me")
+                    print("\n".join(dialogs["fight"]["death2"]))
                     printLine()
                     input(" Game over. Press enter to terminate the program.\n")
                     exit()
-                print("\033[1;34;40m\n Perhaps not all things are meant to be painted. Surely, some of my sketches must be flawed.\033[1;37;40m")
+                print(dialogs["fight"]["abandon"])
                 if self.enemy.val-dam == 1:
                     print("\n You have lost \033[1;33;40m"+str(self.enemy.val-dam)+ "\033[1;37;40m health point. Your current health is \033[1;33;40m"+str(HP)+"\033[1;37;40m.")
                 else:
@@ -800,20 +847,7 @@ def EncounterM():
                 fight.Fight()
     elif room == 5:
         printLine()
-        print("\033[1;34;40m I have reached the middle of my journey in the Autumn Monastery")
-        print(" I have encountered some of its denizens, and I shall surely see a few more before arriving at my destination")
-        print(" My mind is flowing with ideas for new sketches")
-        print(" But my body is feeling tired and exhausted")
-        print(" Perhaps some rest is in order")
-        print(" I notice two stone benches standing aside the path, make myself comfortable, and begin breathing calmly")
-        print(" Crimson leaves fall all around me, and small rays of light piercing through the foliage illuminate the scenery")
-        print(" A monk dressed in bright red garnments exits the monastery, and begins walking down the path towards me")
-        print(" She sits on the second bench, closes her eyes, and speaks")
-        print(" \"You have done well, Disciple of the Master\"")
-        print(" \"You have seen five of our guardians, and learned that not all things are meant to be kept forever\"")
-        print(" \"You seek inspiration at the very bottom of your dreams, correct?\"")
-        print(" \"The dangers standing in your path are not trivial\"")
-        print(" \"But you need not worry about that for now. Breathe, and rest.\"")
+        print("\n".join(dialogs["monastery"]["acolyte"]["text1"]))
         printLine()
         print(" Your current health is \033[1;33;40m"+str(HP)+"\033[1;37;40m/\033[1;33;40m24\033[1;37;40m.")
         print("[1] \033[1;32;40mBreathe\033[1;37;40m (Heal 5 HP)")
@@ -827,11 +861,7 @@ def EncounterM():
         if eventchoice == "1":
             HP += 5
             printLine()
-            print("\033[1;34;40m \"Excellent. Feel the air traverse your lungs. Be refreshed, Disciple.\"")
-            print(" \"Alas, not all things are meant to last forever, as you have learned\"")
-            print(" \"Our Master is eager to put you to the test\"")
-            print(" \"May you remember all we have taught you as you journey onwards\"")
-            print(" I turn to look at the monk and say goodbye, but she has already disappeared.")
+            print("\n".join(dialogs["monastery"]["acolyte"]["breathe"]))
             printLine()
             print(" You have gained 5 health points. Your current health is \033[1;33;40m"+str(HP)+"\033[1;37;40m/\033[1;33;40m24\033[1;37;40m.")
             room += 1
@@ -884,24 +914,14 @@ def EncounterM():
                     
                     continue
             printLine()
-            print("\033[1;34;40m \"Is simply resting so difficult for you?\"")
-            print(" \"I see an Artist's mind never slumbers\"")
-            print(" \"Very well then\"")
-            print(" \"I am eager to see how this dedication will help you in the rest of your journey\"")
-            print(" I turn to look at the monk and say goodbye, but she has already disappeared.")
+            print("\n".join(dialogs["monastery"]["acolyte"]["fight"]))
             printLine()
             room += 1
             input(dialogs["pause"])
             EncounterM()
         else:
             printLine()
-            print("\033[1;34;40m \"You don't know what to choose?\"")
-            print("\033[1;34;40m \"I understand. In such a foreign land, so far away from home...\"")
-            print("\033[1;34;40m \"Finding rest can be rather difficult\"")
-            print("\033[1;34;40m \"Here, compare your breathing with a flower\"")
-            print("\033[1;34;40m \"Opening and closing itself as the day and night chase each other\"")
-            print("\033[1;34;40m \"Excellent.\"")
-            print(" After practicing the monk's exercise for a few minutes, I turn my head to thank her, but she has already disappeared.")
+            print("\n".join(dialogs["monastery"]["acolyte"]["hesitation"]))
             printLine()
             HP += 5
             print(" You have gained 5 health points. Your current health is \033[1;33;40m"+str(HP)+"\033[1;37;40m/\033[1;33;40m24\033[1;37;40m.")
@@ -924,12 +944,9 @@ def EncounterM():
         v = x.name
         w = y.name
         printLine()
-        print("\033[1;34;40m After this rather enriching encounter with my first human being in this strange land")
-        print(" I leave the stone bench behind, grateful for this opportunity to stop for a moment")
-        print(" It is time to press on")
-        print(" And paint a few more statues along the way.\033[1;37;40m")
+        print(dialogs["monastery"]["acolyte"]["ending"])
         printLine()
-        print("\n Paintings remaining before meeting the Master: \033[1;33;40m"+str(11-room)+"\033[1;37;40m\n")
+        print(f"\n Paintings remaining before meeting the Master: \033[1;33;40m{player.next_event - player.room}\033[1;37;40m\n")
         input(dialogs["pause"])
         x.show()
         y.show()
@@ -973,11 +990,7 @@ def EncounterM():
         v = x.name
         w = y.name
         printLine()
-        print("\033[1;34;40m With every step I take, the monastery grows closer")
-        print(" Soon, I shall meet the Master, and put all I have learned to the test")
-        print(" If I succeed")
-        print(" I am certain that great insight will be granted upon me")
-        print(" For now, I cannot resist attempting to paint a few more of these beautiful statues.")
+        print(dialogs["monastery"]["interlude2"])
         printLine()
         print("\n Paintings remaining before meeting the Master: \033[1;33;40m"+str(11-room)+"\033[1;37;40m\n")
         input(dialogs["pause"])
