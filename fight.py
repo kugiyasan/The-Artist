@@ -11,6 +11,8 @@ class Fight():
         self.enemy = enemy
         self.hand = []
         self.inspiration = self.enemy.number_of_insp
+        self.hand_damage = 0
+        self.win = False
 
     def show_hand(self):
         cards = "\033[1;32;40m YOUR HAND:\033[1;37;40m\n"
@@ -19,10 +21,6 @@ class Fight():
             return cards + " You have no cards in your hand!"
 
         return cards + "\n".join(card.description for card in self.hand)
-
-    @property
-    def hand_damage(self):
-        return sum(card.attack for card in self.hand)
 
     def fight_info(self):
         text = f" Your current might is \033[1;31;40m{self.hand_damage}\033[1;37;40m/\033[1;31;40m{self.enemy.HP}\033[1;37;40m."
@@ -170,6 +168,8 @@ class Fight():
         printLine()
         input(dialogs["pause"])
 
+        self.enemy.at_fight_beginning(self.player)
+
         while True:
             printLine()
             print(self.enemy.stats)
@@ -191,13 +191,18 @@ class Fight():
             for card in self.hand:
                 card.at_turn_update(self.hand)
 
+            self.hand_damage = sum(card.attack for card in self.hand)
+            self.enemy.at_turn_update(self, self.hand, self.player)
+
         # End of the battle
-        self.player.discard_pile.extend(self.hand)
+        self.enemy.at_fight_end(self, self.hand, self.player)
         for card in self.hand:
             card.at_fight_end(self.hand, self.player)
+        self.player.discard_pile.extend(self.hand)
 
     def battle_won(self):
         print(dialogs["fight"]["win"].format(self.enemy.name))
         input(dialogs["pause"])
 
         self.player.discard_pile.append(self.enemy.reward)
+        self.win = True
