@@ -2,7 +2,6 @@ import json
 import re
 
 from cards_and_enemies import *
-# from cards_and_enemies import tiger
 from utils import *
 
 
@@ -11,16 +10,15 @@ class Fight():
         self.player = player
         self.enemy = enemy
         self.hand = []
-        self.inspiration = self.enemy.numberOfInsp
+        self.inspiration = self.enemy.number_of_insp
 
-    @property
     def show_hand(self):
         cards = "\033[1;32;40m YOUR HAND:\033[1;37;40m\n"
 
         if len(self.hand) == 0:
             return cards + " You have no cards in your hand!"
 
-        return cards + "\n".join(card.description for card in self.hand) + "\n"
+        return cards + "\n".join(card.description for card in self.hand)
 
     @property
     def hand_damage(self):
@@ -37,26 +35,36 @@ class Fight():
         text += f" and \033[1;33;40m{len(self.player.discard_pile)} \033[1;37;40mcard{plural_discard_pile} remaining in your discard pile."
 
         if self.inspiration > 0:
-            text += f"\n You have \033[1;32;40m{self.inspiration}\033[1;37;40m/\033[1;32;40m{self.enemy.numberOfInsp}\033[1;37;40m Inspiration remaining."
+            text += f"\n You have \033[1;32;40m{self.inspiration}\033[1;37;40m/\033[1;32;40m{self.enemy.number_of_insp}\033[1;37;40m Inspiration remaining."
         else:
             text += "\n \033[1;31;40m⚠\033[1;37;40m You have spent all your Inspiration! You will lose \033[1;33;40m1\033[1;37;40m HP per additional card draw."
 
         return text + "\n"
 
-    def user_move(self):
+    def user_move(self) -> bool:
+        """Returns True if the fight is over"""
         choice = input(" Please type what you wish to do next:\n").lower()
 
         if choice in ("d", "draw"):
             self.draw_card()
+            return
         elif choice in ("a", "abandon"):
             self.abandon_battle()
-        elif choice in self.hand:
-            pass
-        else:
-            printLine()
-            print(' Error: Invalid action selected. Please type "d" to draw a card, "a" to abandon this combat, or type the name of the card you wish to use.')
+            return True
+
+        for card in self.hand:
+            if choice == card.short_name:
+                card.use_card(self, self.player, self.enemy)
+                return
+
+        printLine()
+        print(' Error: Invalid action selected. Please type "d" to draw a card, "a" to abandon this combat, or type the name of the card you wish to use.')
 
     def draw_card(self):
+        """
+        This is the conventionnal way to draw a card,
+        use self._draw_card if you don't want to pay inspiration points
+        """
         if self.inspiration > 0:
             self.inspiration -= 1
         else:
@@ -66,23 +74,57 @@ class Fight():
                 input(dialogs["gameover"])
                 exit()
 
+        self._draw_card()
 
+    def _draw_card(self):
         if len(self.player.draw_pile) == 0:
-            print(dialogs["fight"]["reshuffle"])
+            printLine()
+            print("\n".join(dialogs["fight"]["reshuffle"]))
+            printLine()
+
+            if len(self.player.discard_pile) == 0:
+                print(dialogs["fight"]["no_card"])
+                input(dialogs["gameover"])
+                exit()
+
             self.player.draw_pile = self.player.discard_pile[:]
+            self.player.discard_pile = []
             random.shuffle(self.player.draw_pile)
 
-        self.hand.append(self.player.draw_pile.pop())
+        card = self.player.draw_pile.pop()
+        self.hand.append(card)
 
     def abandon_battle(self):
+        printLine()
+        print(self.enemy.stats)
+        print(self.enemy.reward.description)
+        printLine()
+        print(self.show_hand())
+        
         difference = self.enemy.HP - self.hand_damage
         self.player.HP -= difference
+        HPplural = "s" if difference > 1 else ""
 
         print(dialogs["fight"]["abandon"])
-        print(f" You have lost {difference} health points. Your current health is {self.player.HP}.")
+        print(
+            f"\n You have lost \033[1;33;40m{difference}\033[1;37;40m health point{HPplural}. Your current health is \033[1;33;40m{self.player.HP}\033[1;37;40m.\n")
         input(dialogs["pause"])
 
-        # TODO forget some card
+        self.forget_cards(difference)
+
+    def forget_cards(self, repeat):
+        cards_to_forget = ""
+
+        while cards_to_forget != "exit" or repeat <= 0:
+            print(dialogs["fight"]["forget_cards"])
+            print(self.show_hand())
+            cards_to_forget = input("\n".join(dialogs["fight"]["forget_cards_prompt"]).format(repeat))
+
+            repeat -= 1
+
+        printLine()
+        print(dialogs["fight"]["forget_end"])
+        input(dialogs["pause"])
 
     def fight(self):
         printLine()
@@ -95,19 +137,21 @@ class Fight():
             print(self.enemy.stats)
             print(self.enemy.reward.description)
             printLine()
-            print(self.show_hand)
+            print(self.show_hand())
 
             if self.hand_damage >= self.enemy.HP:
                 self.battle_won()
                 return
 
-            printLine()
-            print()
-
+            printLine("\n")
             print(self.fight_info())
 
-            self.user_move()
+            abandoned = self.user_move()
+            if abandoned:
+                break
 
     def battle_won(self):
         print(dialogs["fight"]["win"].format(self.enemy.name))
         input(dialogs["pause"])
+
+        self.player.discard_pile.extend(self.hand)

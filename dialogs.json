@@ -47,9 +47,16 @@
     ]
   },
   "fight": {
-    "win": "\u001b[1;34;40m I have proven myself worthy, and may now add a sketch of this creature to my collection.\u001b[1;37;40m\n\n \u001b[1;33;40m{}\u001b[1;37;40m has been added to your discard pile.\n",
+    "win": "\u001b[1;34;40m\n I have proven myself worthy, and may now add a sketch of this creature to my collection.\u001b[1;37;40m\n\n \u001b[1;33;40m{}\u001b[1;37;40m has been added to your discard pile.\n",
     "abandon": "\u001b[1;34;40m\n Perhaps not all things are meant to be painted. Surely, some of my sketches must be flawed.\u001b[1;37;40m",
     "forget_cards": "\u001b[1;34;40m\n Using my lost life essence, I shall burn away some of these worthless scribbles.\u001b[1;37;40m",
+    "forget_cards_prompt": [
+      "\n Type the name of the card you wish to forget.",
+      " You may forget \u001b[1;33;40m{}\u001b[1;37;40m more cards.",
+      " Forgetting a \u001b[1;31;40mFlaw\u001b[1;37;40m counts for 2 removed cards.",
+      " Type \"exit\" to quit the forgetting phase.\n"
+    ],
+    "forget_end": "\u001b[1;34;40m Now that my spirit feels lightened, I am ready to resume my journey.",
     "death": [
       "\u001b[1;34;40m My mind is pained with the struggle of creativity",
       " I keep looking for something new to paint, but nothing comes to mind",
@@ -68,6 +75,15 @@
       " Something which I have been struggling to conceal",
       " Emerges from the darkness",
       " And finds its way into my sketchbook"
+    ],
+    "no_card": [
+      " \u001b[1;34;40mMy sketchbook is somehow empty",
+      " Returned to nothing",
+      " As consequence for my destructive whims",
+      " Nothing can be done now",
+      " I open my eyes",
+      " And find myself sitting still",
+      " With an empty canvas standing before me"
     ]
   },
   "monastery": {

@@ -1,8 +1,5 @@
 # AUTHOR: JULIEN ROBERT
 
-# crow as enemy, can discard any card in the hand
-# reshuffle doesn't remove inspiration
-
 import random # Praise RNGesus
 import re
 import sys
@@ -12,9 +9,6 @@ from cards_and_enemies import *
 from fight import Fight
 from utils import *
 
-godmode = False
-if godmode:
-    print("GODMODE IS ACTIVATED\n\n")
 
 class Player():
     def __init__(self):
@@ -29,13 +23,10 @@ class Player():
         self.draw_pile = [red, yellow, blue, dawn, beginning, beginning] + [canvas] * 7
         random.shuffle(self.draw_pile) # initial shuffle
 
-honor = 0
-boss = 0
+        # honor = 0
 
-monkeycom = False #effet de l'ennemi monkey
-moncom = False #effet de la carte monkey
-
-player = Player()
+        # monkeycom = False #effet de l'ennemi monkey
+        # moncom = False #effet de la carte monkey
 
 def mainmenu():
     while True:
@@ -104,6 +95,9 @@ def Monastery():
     printLine()
 
     for _ in range(4):
+        print(f"\n Paintings remaining before next event: \033[1;33;40m{player.next_event - player.room}\033[1;37;40m\n")
+        input(dialogs["pause"])
+
         enemy = choose_opponent()
         fight = Fight(player, enemy)
         fight.fight()
@@ -124,16 +118,26 @@ def Monastery():
 
     # choose opponent and fight
 
-    for i in range(3):
-        pass
-        # fight boss at phase i
+    # Bossfight
+    printLine()
+    print("\n".join(dialogs["monastery"]["boss1"]))
+    printLine()
+    input(dialogs["pause"])
+    printLine()
+    print("\n".join(dialogs["monastery"]["boss2"]))
+    printLine()
+    input(" Press enter to open your sketchbook and FIGHT.\n")
 
-    print("Exiting the monastery")
+    fight = Encounter(master1, "Monastery")
+    fight.Fight()
+    fight = Encounter(master2, "Monastery")
+    fight.Fight()
+    fight = Encounter(master3, "Monastery")
+    fight.Fight()
+
+    ending()
 
 def choose_opponent():
-    print(f"\n Paintings remaining before next event: \033[1;33;40m{player.next_event - player.room}\033[1;37;40m\n")
-    input(dialogs["pause"])
-
     random.shuffle(fight1pool)
     x = fight1pool[0]
     y = fight1pool[1]
@@ -159,8 +163,40 @@ def choose_opponent():
         encount1 = random.randint(0, 1)
 
     return fight1pool.pop(encount1)
-    # fight = Encounter(fight1pool[encount1], "Monastery")
-    # fight.Fight()
+
+def ending():
+    printLine()
+    print("\n".join(dialogs["monastery"]["ending"]["text1"]))
+    printLine()
+    input(" Press enter to receive the results of your evaluation.\n")
+
+    # You can do 0 > honor > 3 in python, but I don't recommand, 
+    # since other languages will execute this from left to right
+    # so 0 > honor will return true, and then true > 3 will be executed, which isn't what we want
+    if honor < 0 or honor > 3:
+        raise GameError("You're not supposed to have more than 3 honor points")
+
+    printLine()
+    print("\n".join(dialogs["monastery"]["ending"][f"honor{honor}"]))
+    printLine()
+    if honor == 0:
+        input(" Game over. Press enter to terminate the program.\n")
+        exit()
+    elif honor != 1:
+        discard.append(master)
+
+    input(dialogs["pause"])
+
+    printLine()
+    print("\n".join(dialogs["monastery"]["ending"]["text1"]))
+    printLine()
+
+    # this part should be in the world selection
+    print("[1] \033[1;33;40m The Golden Hive")
+    print("\033[1;37;40m[2] \033[1;35;40m The Theatre of Virtuosos")
+    dest1 = input("\033[1;37;40m Please enter the number corresponding to your choice to proceed:\n")
+
+    raise NotImplementedError
         
 def Observatory():
     printLine()
@@ -187,12 +223,11 @@ class Encounter:
         global discard
         # global hand
         hand = []
-        global boss
         global handlength
         print(self.enemy.stats)
         printLine()
         input(dialogs["pause"])
-        insp = self.enemy.numberOfInsp
+        insp = self.enemy.number_of_insp
         global HP
         global honor
         global room
@@ -262,22 +297,23 @@ class Encounter:
                 insp += 1
                 moncom = True
             ############################################################################################### EFFETS DÉPART
-            if HP > 24:
-                HP = 24
-            for x in hand:
-                dam += x.val
-            if godmode == True:
-                dam = 999
+            #! how is it possible to get above the max?
+            # if HP > 24:
+            #     HP = 24
+            # for x in hand:
+            #     dam += x.val
+            # if godmode == True:
+            #     dam = 999
             if dam >= self.enemy.val:
-                self.enemy.show()
-                printLine()
-                for x in hand:
-                    x.show()
-                    if x.use != "- \033[1;31;40mUSED\033[1;37;40m" and ("Heal" in x.effect):
-                        HP += x.heal
-                    x.use = ""
-                if boss == 0:
-                    discard.append(self.enemy.reward)
+            #     self.enemy.show()
+            #     printLine()
+            #     for x in hand:
+            #         x.show()
+            #         if x.use != "- \033[1;31;40mUSED\033[1;37;40m" and ("Heal" in x.effect):
+            #             HP += x.heal
+            #         x.use = ""
+            #     # if boss == 0:
+            #     discard.append(self.enemy.reward)
                 ############################################################################################### EFFETS VICTOIRE
                 if spider in hand:
                     HP -= 2
@@ -314,7 +350,7 @@ class Encounter:
                     print("\n \033[1;33;40m"+str(self.enemy.name)+ "\033[1;37;40m has been added to your discard pile.")
                 input("\n Press enter to continue.\n") 
                 break
-            else:
+            else: # haven't win yet
                 if len(hand) == 0:
                     self.enemy.show()
                     printLine()
@@ -971,64 +1007,10 @@ def EncounterM():
                 fight1pool.append(x)
                 fight = Encounter(y, "Monastery")
                 fight.Fight()
-    elif room == 11:
-        boss = 1
-        printLine()
-        print("\n".join(dialogs["monastery"]["boss1"]))
-        printLine()
-        input(dialogs["pause"])
-        printLine()
-        print("\n".join(dialogs["monastery"]["boss2"]))
-        printLine()
-        input(" Press enter to open your sketchbook and FIGHT.\n")
-        fight = Encounter(master1, "Monastery")
-        fight.Fight()
-    elif room == 12:
-        fight = Encounter(master2, "Monastery")
-        fight.Fight()
-    elif room == 13:
-        fight = Encounter(master3, "Monastery")
-        fight.Fight()
-    elif room == 14:
-        ending()
-
-def ending():
-    boss = 0
-    printLine()
-    print("\n".join(dialogs["monastery"]["ending"]["text1"]))
-    printLine()
-    input(" Press enter to receive the results of your evaluation.\n")
-
-    # You can do 0 > honor > 3 in python, but I don't recommand, 
-    # since other languages will execute this from left to right
-    # so 0 > honor will return true, and then true > 3 will be executed, which isn't what we want
-    if honor < 0 or honor > 3:
-        raise GameError("You're not supposed to have more than 3 honor points")
-
-    printLine()
-    print("\n".join(dialogs["monastery"]["ending"][f"honor{honor}"]))
-    printLine()
-    if honor == 0:
-        input(" Game over. Press enter to terminate the program.\n")
-        exit()
-    elif honor != 1:
-        discard.append(master)
-
-    input(dialogs["pause"])
-
-    printLine()
-    print("\n".join(dialogs["monastery"]["ending"]["text1"]))
-    printLine()
-
-    # this part should be in the world selection
-    print("[1] \033[1;33;40m The Golden Hive")
-    print("\033[1;37;40m[2] \033[1;35;40m The Theatre of Virtuosos")
-    dest1 = input("\033[1;37;40m Please enter the number corresponding to your choice to proceed:\n")
-
-    raise NotImplementedError
 
 class GameError(Exception):
     pass
 
 if __name__ == "__main__":
+    player = Player()
     mainmenu()
