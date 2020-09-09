@@ -3,20 +3,24 @@ import re
 
 from utils import dialogs
 
+
 class Card:
-    def __init__(self, name: str, attack: int, effect="No effect.", heal=0, draw=0, discard=0, forget=0, use=None, is_animal=False, is_flaw=False):
-        self.name = name # Nom de la carte
-        self.attack = attack # Valeur numérique de la carte
-        self.effect = effect # Effet de la carte
+    def __init__(self, name: str, attack: int, effect="No effect.",
+                 heal=0, draw=0, discard=0, forget=0,
+                 use=None, is_animal=False, is_flaw=False):
+        self.name = name  # Nom de la carte
+        self.attack = attack  # Valeur numérique de la carte
+        self.effect = effect  # Effet de la carte
         self.heal = heal
         self.draw = draw
         self.discard = discard
         self.forget = forget
-        self.usable =  use
+        self.usable = use
         self.is_animal = is_animal
         self.is_flaw = is_flaw
 
-        self.short_name = self.name[4:].lower() if self.name.startswith("The ") else self.name.lower()
+        self.short_name = self.name[4:].lower() if self.name.startswith(
+            "The ") else self.name.lower()
 
     def at_turn_update(self, hand):
         """at_turn_update is called at each turn when the Card is in the hand"""
@@ -30,11 +34,11 @@ class Card:
 
     @property
     def description(self):
-        if self.attack > 0: # Positive values displayed green
+        if self.attack > 0:  # Positive values displayed green
             color = 32
-        elif self.attack == 0: # 0 displayed yellow
+        elif self.attack == 0:  # 0 displayed yellow
             color = 33
-        else: # Negative values displayed red
+        else:  # Negative values displayed red
             color = 31
 
         if self.usable == True:
@@ -47,14 +51,14 @@ class Card:
         return " {0.name} (\033[1;{1};40m{0.attack}\033[1;37;40m) - {0.effect} {2}".format(self, color, use_state)
 
     def use_card(self, fight, player, enemy):
-        if self.usable == False:
+        if self.usable != True:
             print("\nCan't use that card!\n")
             return
 
         self.usable = False
 
         player.HP += self.heal
-        
+
         for _ in range(self.draw):
             fight._draw_card()
 
@@ -69,21 +73,26 @@ red = Card("Red", 2)
 blue = Card("Blue", 0, "Heal 2 HP.", heal=2, use=True)
 yellow = Card("Yellow", 1, "Draw 1 card.", heal=0, draw=1, use=True)
 beginning = Card("The Beginning", 1)
-dawn = Card("The Dawn", 2, "Heal 2 HP. Draw 2 cards.", heal=2, draw=2, use=True)
-canvas = Card("The Canvas" , 0)
+dawn = Card("The Dawn", 2, "Heal 2 HP. Draw 2 cards.",
+            heal=2, draw=2, use=True)
+canvas = Card("The Canvas", 0)
+
 
 class Tiger(Card):
     def at_turn_update(self, hand):
         self.attack = len(hand) // 2
 
+
 class Stag(Card):
     def at_turn_update(self, hand):
         self.attack = len(hand) - 5
+
 
 class Snake(Card):
     def use_card(self, fight, player, enemy):
         player.HP -= 1
         self.attack += 1
+
 
 class Swan(Card):
     def at_turn_update(self, hand):
@@ -92,6 +101,7 @@ class Swan(Card):
         else:
             self.attack = 0
 
+
 class Crane(Card):
     def at_turn_update(self, hand):
         self.attack = -2
@@ -99,14 +109,17 @@ class Crane(Card):
             if card.attack < 0:
                 self.attack += 2
 
+
 class Turtle(Card):
     def at_fight_end(self, hand, player):
         hand.remove(self)
         player.draw_pile.append(self)
 
+
 class Spider(Card):
     def at_fight_end(self, hand, player):
         player.HP -= 2
+
 
 class Acolyte(Card):
     def at_turn_update(self, hand):
@@ -115,6 +128,7 @@ class Acolyte(Card):
             if card.is_animal:
                 self.attack += 1
 
+
 class Dusk(Card):
     def at_fight_end(self, hand, player):
         # random.shuffle(hand)
@@ -122,37 +136,58 @@ class Dusk(Card):
         hand.pop(random.randrange(0, len(hand)))
         player.HP -= 1
 
+
 class Deceased(Card):
     def at_fight_end(self, hand, player):
         player.HP = 0
 
-tiger = Tiger("The Tiger", 0, "This card's value begins at 0, and increases by 1 for every 2 cards in your hand.", is_animal=True)  #! SPECIAL each turn len(hand)   
-stag = Stag("The Stag", -5, "This card's value increases by 1 for every card in your hand.", is_animal=True)  #! SPECIAL each turn len(hand)
-dragon = Card ("The Dragon", 4, is_animal=True)
-snake = Snake("The Snake", 0, "Reusable. Lose 1 HP. For this combat, this card's value increases by 1.", use=True, is_animal=True) #! SPECIAL use
-rabbit = Card ("The Rabbit", 0, "Discard 2 cards. Draw 2 cards.", draw=2, discard=2, use=True, is_animal=True)
-leopard = Card("The Leopard", 1, "Draw 1 card.", draw=1, use=True, is_animal=True)
-swan = Swan("The Swan", 0, "This card value's is 0. If this is the only card in your hand, the value of this card becomes 4.", is_animal=True) #! SPECIAL each turn len(hand)
-crane = Crane("The Crane", -2, "This card's value increases by 2 for every card with a negative value in your hand.", is_animal=True) #! SPECIAL each turn hand
-turtle = Turtle ("The Turtle", 1, "At the end of this combat, put this card back in your draw pile.", is_animal=True) #! SPECIAL after battle
-mantis = Card ("The Mantis",2,"Heal 1 HP.", heal=1, use=True, is_animal=True)
-wolf = Card("The Wolf", 3, "Forget 1 card.", forget=1, use=True, is_animal=True)
-monkey = Card("The Monkey", 2,"If the enemy you are facing has a might value equal to or greater than 10, gain 1 bonus inspiration when this card is drawn.", is_animal=True) #! SPECIAL at draw
-spider = Spider("The Spider", 3, "At the end of this combat, lose 2 HP.", is_animal=True) #! SPECIAL after battle
-crow = Card("The Crow", 2, "Discard 1 card.", discard=1, use=True, is_animal=True)
-frog = Card("The Frog", 0, "Forget 1 card.", forget=1, use=True, is_animal=True)
 
-acolyte = Acolyte("The Acolyte", 2, "While this card is in your hand, increase the value of all cards containing the name of an animal by 1.") #! SPECIAL each turn
-master = Acolyte("The Acolyte", 2, "While this card is in your hand, increase the value of all cards containing the name of an animal by 1.") #! SPECIAL each turn
+tiger = Tiger("The Tiger", 0, "This card's value begins at 0, and increases by 1 for every 2 cards in your hand.",
+              is_animal=True)  # ! SPECIAL each turn len(hand)
+stag = Stag("The Stag", -5, "This card's value increases by 1 for every card in your hand.",
+            is_animal=True)  # ! SPECIAL each turn len(hand)
+dragon = Card("The Dragon", 4, is_animal=True)
+snake = Snake("The Snake", 0, "Reusable. Lose 1 HP. For this combat, this card's value increases by 1.",
+              use=True, is_animal=True)  # ! SPECIAL use
+rabbit = Card("The Rabbit", 0, "Discard 2 cards. Draw 2 cards.",
+              draw=2, discard=2, use=True, is_animal=True)
+leopard = Card("The Leopard", 1, "Draw 1 card.",
+               draw=1, use=True, is_animal=True)
+swan = Swan("The Swan", 0, "This card value's is 0. If this is the only card in your hand, the value of this card becomes 4.",
+            is_animal=True)  # ! SPECIAL each turn len(hand)
+crane = Crane("The Crane", -2, "This card's value increases by 2 for every card with a negative value in your hand.",
+              is_animal=True)  # ! SPECIAL each turn hand
+turtle = Turtle("The Turtle", 1, "At the end of this combat, put this card back in your draw pile.",
+                is_animal=True)  # ! SPECIAL after battle
+mantis = Card("The Mantis", 2, "Heal 1 HP.", heal=1, use=True, is_animal=True)
+wolf = Card("The Wolf", 3, "Forget 1 card.",
+            forget=1, use=True, is_animal=True)
+monkey = Card("The Monkey", 2, "If the enemy you are facing has a might value equal to or greater than 10, gain 1 bonus inspiration when this card is drawn.",
+              is_animal=True)  # ! SPECIAL at draw
+spider = Spider("The Spider", 3, "At the end of this combat, lose 2 HP.",
+                is_animal=True)  # ! SPECIAL after battle
+crow = Card("The Crow", 2, "Discard 1 card.",
+            discard=1, use=True, is_animal=True)
+frog = Card("The Frog", 0, "Forget 1 card.",
+            forget=1, use=True, is_animal=True)
 
-god = Card("The God", 420)
+# ! SPECIAL each turn
+acolyte = Acolyte("The Acolyte", 2,
+                  "While this card is in your hand, increase the value of all cards containing the name of an animal by 1.")
+# ! SPECIAL each turn
+master = Acolyte("The Acolyte", 2,
+                 "While this card is in your hand, increase the value of all cards containing the name of an animal by 1.")
+
 
 def flaw_pile_generator():
     shamed = Card("The Shamed", -2, "Flaw. No effect.", is_flaw=True)
-    dusk = Dusk("The Dusk", -1, "Flaw. At the end of this combat, forget a random card in your hand and lose 1 HP.", is_flaw=True) #! SPECIAL after battle
+    dusk = Dusk("The Dusk", -1, "Flaw. At the end of this combat, forget a random card in your hand and lose 1 HP.",
+                is_flaw=True)  # ! SPECIAL after battle
 
     desperate = Card("The Desperate", 0, "Flaw. No effect.", is_flaw=True)
-    deceased = Deceased("The Deceased", -99, "Flaw. At the end of this combat, die.", is_flaw=True) #! SPECIAL after battle
+    # ! SPECIAL after battle
+    deceased = Deceased("The Deceased", -99,
+                        "Flaw. At the end of this combat, die.", is_flaw=True)
 
     flaws = [shamed, dusk]
     random.shuffle(flaws)
@@ -164,7 +199,9 @@ def flaw_pile_generator():
     while True:
         yield deceased
 
+
 flaw_pile = flaw_pile_generator()
+
 
 class Enemy:
     def __init__(self, name, HP, number_of_insp, effect, reward, short_name=None):
@@ -181,7 +218,8 @@ class Enemy:
 
         if not short_name:
             if not self.name.startswith("The "):
-                raise ValueError("name should begin with 'The ' or specify a short_name")
+                raise ValueError(
+                    "name should begin with 'The ' or specify a short_name")
             short_name = self.name[4:].lower()
         self.desc = "\n ".join(dialogs["enemies"][short_name])
 
@@ -198,16 +236,18 @@ class Enemy:
 
     def at_turn_update(self, fight, hand, player):
         pass
-    
+
     def at_fight_beginning(self, player):
         pass
 
     def at_fight_end(self, fight, hand, player):
         pass
 
-class DragonE(Enemy):
+
+class CrowE(Enemy):
     def at_turn_update(self, fight, hand, player):
         fight.hand_damage += len(hand)
+
 
 class CraneE(Enemy):
     def at_fight_beginning(self, player):
@@ -217,6 +257,12 @@ class CraneE(Enemy):
             if card.is_flaw:
                 self.HP += 1
 
+
+class DragonE(Enemy):
+    def at_turn_update(self, fight, hand, player):
+        fight.hand_damage += len(hand)
+
+
 class LeopardE(Enemy):
     def at_turn_update(self, fight, hand, player):
         if len(hand) > 3:
@@ -224,56 +270,66 @@ class LeopardE(Enemy):
             player.discard_pile.append(card)
             fight.hand_damage -= card.attack
 
-class MonkeyE(Enemy):
-    def at_fight_beginning(self, player):
-        #? should we steal at equal chances from draw_pile and discard_pile?
-        if len(player.draw_pile) > 0:
-            self.monkey_steal = player.draw_pile.pop()
-        else:
-            #! can raise an error if the player don't have cards, 
-            #! but that should be handled somewhere else as a death
-            self.monkey_steal = player.discard_pile.pop()
-    
-    def at_fight_end(self, fight, hand, player):
-        player.discard_pile.append(self.monkey_steal)
 
 class MantisE(Enemy):
     def at_fight_end(self, fight, hand, player):
         player.HP += fight.inspiration
+
+
+class MonkeyE(Enemy):
+    def at_fight_beginning(self, player):
+        # ? should we steal at equal chances from draw_pile and discard_pile?
+        if len(player.draw_pile) > 0:
+            self.monkey_steal = player.draw_pile.pop()
+        else:
+            #! can raise an error if the player don't have cards,
+            #! but that should be handled somewhere else as a death
+            self.monkey_steal = player.discard_pile.pop()
+
+        self.HP = self.monkey_steal.attack
+
+    def at_fight_end(self, fight, hand, player):
+        player.discard_pile.append(self.monkey_steal)
+
 
 class WolfE(Enemy):
     def at_fight_end(self, fight, hand, player):
         if not fight.win:
             hand.pop(random.randrange(len(hand)))
 
-class CrowE(Enemy):
-    def at_turn_update(self, fight, hand, player):
-        fight.hand_damage += len(hand)
-        
 
-
-# TODO each enemy should be derived from the Enemy class, and they should implement the custom fight mechanics
 #might, inspiration
-tigerE = Enemy("The Tiger", 4, 4, "No effects.", tiger)
-swanE = Enemy("The Swan", 0, 0, "No effects.", swan)
-dragonE = DragonE("The Dragon", 10, 5, "Each card in your hand adds 1 to your total might.", dragon) #! SPECIAL each turn hand
-craneE = CraneE("The Crane", 0, 1, "This enemy's might is equal to the number of Flaw cards you have in your deck.", crane) #! SPECIAL first turn player
-leopardE = LeopardE("The Leopard", 2, 3, "You may not have more than 3 cards in your hand. Exceeding this limit will cause a random card to be discarded.", leopard) #! SPECIAL each turn hand
+craneE = CraneE("The Crane", 0, 1,
+                "This enemy's might is equal to the number of Flaw cards you have in your deck.", crane)
+crowE = CrowE("The Crow", 2, 3,
+              "Whenever you use the active effect of a card, discard it.", crow)
+dragonE = DragonE("The Dragon", 10, 5,
+                  "Each card in your hand adds 1 to your total might.", dragon)
+frogE = Enemy("The Frog", 1, 1, "No effects.", frog)
+leopardE = LeopardE("The Leopard", 2, 3,
+                    "You may not have more than 3 cards in your hand. Exceeding this limit will cause a random card to be discarded.", leopard)
+mantisE = MantisE("The Mantis", 3, 3,
+                  "Each unused point of inspiration after this combat heals you for 1 HP.", mantis)
+monkeyE = MonkeyE("The Monkey", "?", 1,
+                  "This enemy's might is equal to the value of a random card taken away from your deck. The card will be put back at the end of the combat.", monkey)
+rabbitE = Enemy("The Rabbit", 0, 0, "No effects.", rabbit)
 snakeE = Enemy("The Snake", 1, 1, "No effects.", snake)
-monkeyE = MonkeyE("The Monkey", "?", 1, "This enemy's might is equal to the value of a random card taken away from your deck. The card will be put back at the end of the combat.",monkey) #! SPECIAL first turn player + end battle
+spiderE = Enemy("The Spider", 0, 0, "No effects.", spider)
 stagE = Enemy("The Stag", 2, 3, "No effects.", stag)
-mantisE = MantisE("The Mantis", 3, 3, "Each unused point of inspiration after this combat heals you for 1 HP.", mantis) #! SPECIAL end battle hand player
-wolfE = WolfE("The Wolf", 4, 4, "If you lose this combat, forget a random card in your hand.", wolf)  #! SPECIAL end battle win/lose hand
-rabbitE = Enemy("The Rabbit",0,0,"No effects.", rabbit)
-turtleE = Enemy ("The Turtle",2,2,"No effects.",turtle)
-spiderE = Enemy("The Spider",0,0,"No effects.",spider)
-#? Reaction of The Crow vs Snake (discard or not)(plz not discard easier)
-crowE = CrowE("The Crow", 2,3,"Whenever you use the active effect of a card, discard it.",crow) #! SPECIAL each turn hand 
-frogE = Enemy("The Frog", 1,1,"No effects.",frog)
+swanE = Enemy("The Swan", 0, 0, "No effects.", swan)
+tigerE = Enemy("The Tiger", 4, 4, "No effects.", tiger)
+turtleE = Enemy("The Turtle", 2, 2, "No effects.", turtle)
+wolfE = WolfE("The Wolf", 4, 4,
+              "If you lose this combat, forget a random card in your hand.", wolf)
 
-fight1pool = [tigerE, swanE, dragonE, craneE, leopardE, snakeE, monkeyE, stagE, mantisE, wolfE, rabbitE, turtleE,spiderE,crowE,frogE]
+fight1pool = [tigerE, swanE, dragonE, craneE, leopardE, snakeE, monkeyE,
+              stagE, mantisE, wolfE, rabbitE, turtleE, spiderE, crowE, frogE]
 
-acolyteE = Enemy("The Acolyte", 8,5, "Every card in your hand which contains the name of an animal increases your total might by 1.", acolyte, short_name="acolyte") #! SPECIAL each turn hand
-master1 = Enemy("The Master \033[1;37;40m(\033[1;32;40m███\033[1;37;40m)", 8, 5, "Every card in your hand which contains the name of an animal increases The Master's total might by 1.", master, short_name="master1") #! SPECIAL each turn hand
-master2 = Enemy("The Master \033[1;37;40m(\033[1;32;40m██\033[1;31;40m█\033[1;37;40m)", 4, 1, "At the end of this combat, heal 1 HP for every point of might exceeding the required total.", master, short_name="master2") #! SPECIAL end battle player enemy hand
-master3 = Enemy("The Master \033[1;37;40m(\033[1;32;40m█\033[1;31;40m██\033[1;37;40m)", 10, 3, "At the start of this combat, gain 1 inspiration for every Flaw present in your deck.", master, short_name="master3") #! SPECIAL first turn player self
+acolyteE = Enemy("The Acolyte", 8, 5, "Every card in your hand which contains the name of an animal increases your total might by 1.",
+                 acolyte, short_name="acolyte")  # ! SPECIAL each turn hand
+master1 = Enemy("The Master \033[1;37;40m(\033[1;32;40m███\033[1;37;40m)", 8, 5,
+                "Every card in your hand which contains the name of an animal increases The Master's total might by 1.", master, short_name="master1")  # ! SPECIAL each turn hand
+master2 = Enemy("The Master \033[1;37;40m(\033[1;32;40m██\033[1;31;40m█\033[1;37;40m)", 4, 1,
+                "At the end of this combat, heal 1 HP for every point of might exceeding the required total.", master, short_name="master2")  # ! SPECIAL end battle player enemy hand
+master3 = Enemy("The Master \033[1;37;40m(\033[1;32;40m█\033[1;31;40m██\033[1;37;40m)", 10, 3,
+                "At the start of this combat, gain 1 inspiration for every Flaw present in your deck.", master, short_name="master3")  # ! SPECIAL first turn player self

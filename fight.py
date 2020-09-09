@@ -66,11 +66,7 @@ class Fight():
         if self.inspiration > 0:
             self.inspiration -= 1
         else:
-            self.player.HP -= 1
-            if self.player.HP <= 0:
-                print("\n".join(dialogs["fight"]["death"]))
-                input(dialogs["gameover"])
-                exit()
+            self.player.HP -= 1                
 
         self._draw_card()
 
