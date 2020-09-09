@@ -408,28 +408,28 @@
     ],
     "acolyte": [
       "\u001b[1;34;40m \"I can see that the notion of rest is alien to you\"",
-      " \"For you, every situation is yet another painting waiting to be created, is it not?\"",
-      " \"My apologies, dear Artist, but a sketch of me is not granted\"",
-      " \"It is earned.\"",
-      " I open my sketchbook at its first page, as the Acolyte takes on her battle stance."
+      "\"For you, every situation is yet another painting waiting to be created, is it not?\"",
+      "\"My apologies, dear Artist, but a sketch of me is not granted\"",
+      "\"It is earned.\"",
+      "I open my sketchbook at its first page, as the Acolyte takes on her battle stance."
     ],
     "master1": [
-      " \n\u001b[1;31;40mROUND 1\n",
-      " \u001b[1;34;40m\"Each statue I have carved possesses a soul of its own.\"",
-      " \"However, I am, and will always will be their Master\"",
-      " \"To begin your final test, let us see if you have memorized their lessons.\""
+      "\n \u001b[1;31;40mROUND 1\n",
+      "\u001b[1;34;40m\"Each statue I have carved possesses a soul of its own.\"",
+      "\"However, I am, and will always will be their Master\"",
+      "\"To begin your final test, let us see if you have memorized their lessons.\""
     ],
     "master2": [
-      " \n\u001b[1;31;40mROUND 2\n",
-      " \u001b[1;34;40m\"This next battle should be much easier, now that you have acquainted yourself with my fighting style.\"",
-      " \"However, make sure to keep painting to the best of your ability!\"",
-      " \"I like to grant a special reward to disciples who truly manage to exceed my expectations.\""
+      "\n \u001b[1;31;40mROUND 2\n",
+      "\u001b[1;34;40m\"This next battle should be much easier, now that you have acquainted yourself with my fighting style.\"",
+      "\"However, make sure to keep painting to the best of your ability!\"",
+      "\"I like to grant a special reward to disciples who truly manage to exceed my expectations.\""
     ],
     "master3": [
-      " \n\u001b[1;31;40mFINAL ROUND\n",
-      " \u001b[1;34;40m\"It is time. Show me the true colors of your power!\"",
-      " \"I wish to see every work of art you have crafted in my grove.\"",
-      " \"Even the worst Flaws can be turned into something beautiful by the most proficient students!\""
+      "\n \u001b[1;31;40mFINAL ROUND\n",
+      "\u001b[1;34;40m\"It is time. Show me the true colors of your power!\"",
+      "\"I wish to see every work of art you have crafted in my grove.\"",
+      "\"Even the worst Flaws can be turned into something beautiful by the most proficient students!\""
     ]
   }
 }

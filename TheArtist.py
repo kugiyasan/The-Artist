@@ -264,17 +264,17 @@ def Bossfight():
     printLine()
     input(" Press enter to open your sketchbook and FIGHT.\n")
 
-    dialogs["fight"]["win"] = "\033[1;34;40m\n \"Excellent work, disciple! However, I am only getting started...\"\033[1;37;40m"
+    dialogs["fight"]["win"] = "\033[1;34;40m\n \"Excellent work, disciple! However, I am only getting started...\"\033[1;37;40m\n"
     dialogs["fight"]["abandon"] = "\033[1;34;40m \"Hmm, this is concerning. Perhaps you just weren't warmed up yet.\""
     fight = Fight(player, master1)
     fight.fight()
 
-    dialogs["fight"]["win"] = "\033[1;34;40m\n \"How splendid! It seems you are ready for your true ultimate trial.\"\033[1;37;40m"
+    dialogs["fight"]["win"] = "\033[1;34;40m\n \"How splendid! It seems you are ready for your true ultimate trial.\"\033[1;37;40m\n"
     dialogs["fight"]["abandon"] = "\033[1;34;40m \"What is this? Gather your equipment, and prove that you are worthy of my teachings!\""
     fight = Fight(player, master2)
     fight.fight()
 
-    dialogs["fight"]["win"] = "\033[1;34;40m\n \"Absolutely outstanding! Please follow me inside the monastery, and we shall discuss about your performance.\"\033[1;37;40m"
+    dialogs["fight"]["win"] = "\033[1;34;40m\n \"Absolutely outstanding! Please follow me inside the monastery, and we shall discuss about your performance.\"\033[1;37;40m\n"
     dialogs["fight"]["abandon"] = "\033[1;34;40m \"This final trial was intended to be difficult. I am disappointed, but not surprised. Follow me inside the monastery, and we shall discuss of your performance.\""
     fight = Fight(player, master3)
     fight.fight()
@@ -303,12 +303,12 @@ def ending():
     input(dialogs["pause"])
 
     printLine()
-    print("\n".join(dialogs["monastery"]["ending"]["text1"]))
+    print("\n".join(dialogs["monastery"]["ending"]["text2"]))
     printLine()
 
     # this part should be in the world selection
-    print("[1] \033[1;33;40m The Golden Hive")
-    print("\033[1;37;40m[2] \033[1;35;40m The Theatre of Virtuosos")
+    print("[1] \033[1;33;40m The Golden Hive\033[1;37;40m")
+    print("[2] \033[1;35;40m The Theatre of Virtuosos")
     dest1 = input(
         "\033[1;37;40m Please enter the number corresponding to your choice to proceed:\n")
 

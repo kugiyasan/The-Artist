@@ -83,11 +83,13 @@ class Fight():
             input(dialogs["pause"])
 
             self.player.draw_pile = self.player.discard_pile[:]
+            self.player.draw_pile.append(next(flaw_pile))
             self.player.discard_pile = []
             random.shuffle(self.player.draw_pile)
 
         card = self.player.draw_pile.pop()
         self.hand.append(card)
+        card.at_draw(self, self.enemy)
 
     def abandon_battle(self):
         printLine()
@@ -121,7 +123,12 @@ class Fight():
 
             for card in self.hand:
                 if card.short_name == card_to_forget:
-                    # TODO handle flaw card as x2
+                    if card.is_flaw:
+                        if  repeat < 2:
+                            print("Not enough points to remove a Flaw card")
+                            break
+                        else:
+                            repeat -= 1
                     self.hand.remove(card)
                     repeat -= 1
                     break
@@ -164,7 +171,7 @@ class Fight():
         printLine()
         input(dialogs["pause"])
 
-        self.enemy.at_fight_beginning(self.player)
+        self.enemy.at_fight_beginning(self.fight, self.player)
 
         while True:
             printLine()

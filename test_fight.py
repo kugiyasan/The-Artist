@@ -16,12 +16,18 @@ from TheArtist import *
 # 7. Remove the print(repr(output)) line, run the script and you should have a passing test!
 
 # TODO tests
-# Normal cards: 
+# Normal cards: beginning canvas red blue yellow dawn crow dragon frog leopard mantis rabbit wolf
+# Cards with special effects, listed below:
+#* crane
+#* monkey
+#* snake
+#* spider
+#* stag
+#* swan
+#* tiger
+#* turtle
+
 # Normal enemies: frogE rabbitE snakeE spiderE stagE swanE tigerE turtleE
-# death no HP
-# death no HP by spider Card after match
-# EncounterAcolyte() + Enemy + Card
-# Bossfight() + Enemy + Card
 # Enemies with special effects, listed below:
 # * craneE
 # * crowE
@@ -30,6 +36,13 @@ from TheArtist import *
 # * mantisE
 # * monkeyE
 # * wolfE
+
+# EncounterAcolyte() + Enemy + Card
+# Bossfight() + Enemy + Card
+
+# Every kind of death
+# death no HP
+# death no HP by spider Card after match
 
 
 @contextmanager
