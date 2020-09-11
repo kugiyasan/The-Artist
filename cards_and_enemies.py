@@ -16,6 +16,7 @@ class Card:
         self.discard = discard
         self.forget = forget
         self.usable = use
+        # should replace the next var by self.family, which may contain a Enum
         self.is_animal = is_animal
         self.is_flaw = is_flaw
 
@@ -181,6 +182,9 @@ turtle = Turtle("The Turtle", 1, "At the end of this combat, put this card back 
 wolf = Card("The Wolf", 3, "Forget 1 card.",
             forget=1, use=True, is_animal=True)
 
+starter_draw_pile = [red, yellow, blue, dawn,
+                     beginning, beginning] + [canvas] * 7
+
 # ! SPECIAL each turn
 acolyte = Acolyte("The Acolyte", 2,
                   "While this card is in your hand, increase the value of all cards containing the name of an animal by 1.")
@@ -225,12 +229,13 @@ class Enemy:
         self.number_of_insp = number_of_insp
         self.reward = reward
 
-        if not short_name:
+        if short_name is None:
             if not self.name.startswith("The "):
                 raise ValueError(
                     "name should begin with 'The ' or specify a short_name")
             short_name = self.name[4:].lower()
-        self.desc = "\n ".join(dialogs["enemies"][short_name])
+        self.desc = "\n ".join(dialogs["enemies"].get(
+            short_name, [f"A wild {self.name} appeared!"]))
 
     @property
     def stats(self):
@@ -293,14 +298,7 @@ class MantisE(Enemy):
 
 class MonkeyE(Enemy):
     def at_fight_beginning(self, fight, player):
-        # ? should we steal at equal chances from draw_pile and discard_pile?
-        if len(player.draw_pile) > 0:
-            self.monkey_steal = player.draw_pile.pop()
-        else:
-            #! can raise an error if the player don't have cards,
-            #! but that should be handled somewhere else as a death
-            self.monkey_steal = player.discard_pile.pop()
-
+        self.monkey_steal = player.draw_pile_pop()
         self.HP = self.monkey_steal.attack
 
     def at_fight_end(self, fight, hand, player):
@@ -310,6 +308,7 @@ class MonkeyE(Enemy):
 class WolfE(Enemy):
     def at_fight_end(self, fight, hand, player):
         if not fight.win:
+            #! pop on empty list
             hand.pop(random.randrange(len(hand)))
 
 
@@ -364,9 +363,9 @@ class Master3E(Enemy):
 
 acolyteE = AcolyteE("The Acolyte", 8, 5, "Every card in your hand which contains the name of an animal increases your total might by 1.",
                     acolyte, short_name="acolyte")
-master1 = Master1E("The Master \033[1;37;40m(\033[1;32;40m███\033[1;37;40m)", 8, 5,
-                   "Every card in your hand which contains the name of an animal increases The Master's total might by 1.", master, short_name="master1")
-master2 = Master2E("The Master \033[1;37;40m(\033[1;32;40m██\033[1;31;40m█\033[1;37;40m)", 4, 1,
-                   "At the end of this combat, heal 1 HP for every point of might exceeding the required total.", master, short_name="master2")
-master3 = Master3E("The Master \033[1;37;40m(\033[1;32;40m█\033[1;31;40m██\033[1;37;40m)", 10, 3,
-                   "At the start of this combat, gain 1 inspiration for every Flaw present in your deck.", master, short_name="master3")
+master1E = Master1E("The Master \033[1;37;40m(\033[1;32;40m███\033[1;37;40m)", 8, 5,
+                    "Every card in your hand which contains the name of an animal increases The Master's total might by 1.", master, short_name="master1")
+master2E = Master2E("The Master \033[1;37;40m(\033[1;32;40m██\033[1;31;40m█\033[1;37;40m)", 4, 1,
+                    "At the end of this combat, heal 1 HP for every point of might exceeding the required total.", master, short_name="master2")
+master3E = Master3E("The Master \033[1;37;40m(\033[1;32;40m█\033[1;31;40m██\033[1;37;40m)", 10, 3,
+                    "At the start of this combat, gain 1 inspiration for every Flaw present in your deck.", master, short_name="master3")
