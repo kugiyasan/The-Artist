@@ -15,8 +15,7 @@
   "title": {
     "warnings": [
       " Please ensure that all of the following words are easily readable. Adjust your color settings if they are not.",
-      " \u001b[1;30;47mBlack\u001b[1;37;40m \u001b[1;31;40mRed \u001b[1;32;40mGreen \u001b[1;33;40mYellow \u001b[1;34;40mBlue \u001b[1;35;40mPurple \u001b[1;36;40mCyan \u001b[1;37;40mWhite",
-      " Please know in advance that this game will make sound and play music, don't be surprised!"
+      " \u001b[1;30;47mBlack\u001b[1;37;40m \u001b[1;31;40mRed \u001b[1;32;40mGreen \u001b[1;33;40mYellow \u001b[1;34;40mBlue \u001b[1;35;40mPurple \u001b[1;36;40mCyan \u001b[1;37;40mWhite"
     ],
     "asciiArt": [
       "\u001b[1;36;40m",

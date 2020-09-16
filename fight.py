@@ -1,11 +1,12 @@
-from utils import print_double_line, dialogs, smooth_print, user_input
+from utils import dialogs
 import json
 import random
 import re
 
 
 class Fight():
-    def __init__(self, player, enemy):
+    def __init__(self, window, player, enemy):
+        self.window = window
         self.player = player
         self.enemy = enemy
         self.hand = []
@@ -40,7 +41,7 @@ class Fight():
 
     def user_move(self) -> bool:
         """Returns True if the fight is over (the return bool thing is ugly)"""
-        choice = user_input(" Please type what you wish to do next:\n").lower()
+        choice = self.window.user_input(" Please type what you wish to do next:\n").lower()
 
         if choice in ("d", "draw"):
             self.draw_card()
@@ -54,8 +55,8 @@ class Fight():
                 card.use_card(self, self.player, self.enemy)
                 return
 
-        print_double_line()
-        smooth_print(
+        self.window.print_double_line()
+        self.window.smooth_print(
             ' Error: Invalid action selected. Please type "d" to draw a card, "a" to abandon this combat, or type the name of the card you wish to use.')
 
     def draw_card(self):
@@ -76,20 +77,20 @@ class Fight():
         card.at_draw(self, self.enemy)
 
     def abandon_battle(self):
-        print_double_line()
-        smooth_print(self.enemy.stats)
-        smooth_print(self.enemy.reward.description)
-        print_double_line()
-        smooth_print(self.show_hand())
+        self.window.print_double_line()
+        self.window.smooth_print(self.enemy.stats)
+        self.window.smooth_print(self.enemy.reward.description)
+        self.window.print_double_line()
+        self.window.smooth_print(self.show_hand())
 
         difference = self.enemy.HP - self.hand_damage
         self.player.HP -= difference
         HPplural = "s" if difference > 1 else ""
 
-        smooth_print(dialogs["fight"]["abandon"])
-        smooth_print(
+        self.window.smooth_print(dialogs["fight"]["abandon"])
+        self.window.smooth_print(
             f"\n You have lost \033[1;33;40m{difference}\033[1;37;40m health point{HPplural}. Your current health is \033[1;33;40m{self.player.HP}\033[1;37;40m.\n")
-        user_input(dialogs["pause"])
+        self.window.user_input(dialogs["pause"])
 
         self.forget_cards(difference)
 
@@ -97,19 +98,19 @@ class Fight():
         card_to_forget = ""
 
         while card_to_forget != "exit" and repeat > 0:
-            smooth_print(dialogs["fight"]["forget_cards"])
-            smooth_print(self.show_hand())
+            self.window.smooth_print(dialogs["fight"]["forget_cards"])
+            self.window.smooth_print(self.show_hand())
             if len(self.hand) == 0:
                 break
 
-            card_to_forget = user_input(
+            card_to_forget = self.window.user_input(
                 "\n".join(dialogs["fight"]["forget_cards_prompt"]).format(repeat))
 
             for card in self.hand:
                 if card.short_name == card_to_forget:
                     if card.is_flaw:
                         if repeat < 2:
-                            smooth_print(
+                            self.window.smooth_print(
                                 "Not enough points to remove a Flaw card")
                             break
                         else:
@@ -118,27 +119,27 @@ class Fight():
                     repeat -= 1
                     break
 
-        print_double_line()
-        smooth_print(dialogs["fight"]["forget_end"])
-        print_double_line("\n")
-        user_input(dialogs["pause"])
+        self.window.print_double_line()
+        self.window.smooth_print(dialogs["fight"]["forget_end"])
+        self.window.print_double_line("\n")
+        self.window.user_input(dialogs["pause"])
 
     def discard_cards(self, repeat):
         card_to_discard = ""
 
         # ? Should we let the user exit a discard move?
         while card_to_discard != "exit" and repeat > 0:
-            print_double_line()
-            smooth_print(self.show_hand())
+            self.window.print_double_line()
+            self.window.smooth_print(self.show_hand())
             if len(self.hand) == 0:
                 break
 
             plural = "s" if repeat > 1 else ""
-            smooth_print(
+            self.window.smooth_print(
                 f"\n You may discard \033[1;33;40m{repeat}\033[1;37;40m more card{plural}.\n")
-            print_double_line()
+            self.window.print_double_line()
 
-            card_to_discard = user_input(
+            card_to_discard = self.window.user_input(
                 " Type the name of the card you wish to discard.\n")
 
             for card in self.hand:
@@ -148,29 +149,31 @@ class Fight():
                     repeat -= 1
                     break
             else:
-                smooth_print(dialogs["monastery"]["fight"]["discard_error"])
+                self.window.smooth_print(dialogs["monastery"]["fight"]["discard_error"])
 
     def fight(self):
-        print_double_line()
-        smooth_print("\033[1;34;40m" + self.enemy.desc)
-        print_double_line()
-        user_input(dialogs["pause"])
+        self.window.clear()
+        self.window.print_double_line()
+        self.window.smooth_print("\033[1;34;40m" + self.enemy.desc)
+        self.window.print_double_line()
+        self.window.user_input(dialogs["pause"])
 
         self.enemy.at_fight_beginning(self.fight, self.player)
 
         while True:
-            print_double_line()
-            smooth_print(self.enemy.stats)
-            smooth_print(self.enemy.reward.description)
-            print_double_line()
-            smooth_print(self.show_hand())
+            self.window.clear()
+            self.window.print_double_line()
+            self.window.smooth_print(self.enemy.stats)
+            self.window.smooth_print(self.enemy.reward.description)
+            self.window.print_double_line()
+            self.window.smooth_print(self.show_hand())
 
             if self.hand_damage >= self.enemy.HP:
                 self.battle_won()
                 break
 
-            print_double_line("\n")
-            smooth_print(self.fight_info())
+            self.window.print_double_line("\n")
+            self.window.smooth_print(self.fight_info())
 
             abandoned = self.user_move()
             if abandoned:
@@ -189,8 +192,10 @@ class Fight():
         self.player.discard_pile.extend(self.hand)
 
     def battle_won(self):
-        smooth_print(dialogs["fight"]["win"].format(self.enemy.name))
-        user_input(dialogs["pause"])
+        self.window.smooth_print(dialogs["fight"]["win"].format(self.enemy.name))
+        self.window.user_input(dialogs["pause"])
+
+        self.window.clear()
 
         self.player.discard_pile.append(self.enemy.reward)
         self.win = True
