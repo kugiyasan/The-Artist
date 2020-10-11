@@ -27,7 +27,7 @@ class Player():
         self.draw_pile = starter_draw_pile
         random.shuffle(self.draw_pile)  # initial shuffle
 
-        # honor = 0
+        # self.honor = 0
 
     @property
     def HP(self):
@@ -72,6 +72,7 @@ def mainmenu():
         window.print_double_line()
         window.smooth_print("\n".join(dialogs["title"]["warnings"]))
         window.print_double_line()
+        #! need a width of 90, or the ASCII art will be destroyed
         window.smooth_print("\n".join(dialogs["title"]["asciiArt"]))
         window.print_double_line()
 

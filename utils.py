@@ -2,6 +2,7 @@ import curses
 import json
 import logging
 import re
+import time
 
 with open("dialogs.json") as jsonFile:
     dialogs = json.load(jsonFile)
@@ -45,15 +46,20 @@ class Window():
                 m = text_and_ansi[i][2:-1]
                 color = self.ansi_to_color_int(m)
                 continue
-            try:
-                self.stdscr.addstr(
-                    text_and_ansi[i], curses.color_pair(color) | curses.A_BOLD)
-            except:
-                self.stdscr.clear()
-                self.stdscr.addstr(
-                    text_and_ansi[i], curses.color_pair(color) | curses.A_BOLD)
+            for c in text_and_ansi[i]:
+                self.stdscr.addch(c, curses.color_pair(color) | curses.A_BOLD)
+                self.stdscr.refresh()
+                time.sleep(1/300)
 
-        self.stdscr.refresh()
+            #! should handle overflow, either by clearing and writing, or scrolling the already written text
+            # try:
+                # self.stdscr.addstr(text_and_ansi[i], curses.color_pair(color) | curses.A_BOLD)
+            # except:
+            #     self.stdscr.clear()
+            #     self.stdscr.addstr(
+            #         text_and_ansi[i], curses.color_pair(color) | curses.A_BOLD)
+
+        # self.stdscr.refresh()
 
     def ansi_to_color_int(self, ansi):
         # I was too lazy and this is a great patch
