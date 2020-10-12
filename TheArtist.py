@@ -1,6 +1,6 @@
 # AUTHOR: JULIEN ROBERT
 
-import curses
+import colorama
 import logging
 import random  # Praise RNGesus
 import re
@@ -68,7 +68,7 @@ class Player():
 
 def mainmenu():
     while True:
-        window.stdscr.clear()
+        window.clear()
         window.print_double_line()
         window.smooth_print("\n".join(dialogs["title"]["warnings"]))
         window.print_double_line()
@@ -101,7 +101,7 @@ def mainmenu():
 
 
 def intro():
-    window.stdscr.clear()
+    window.clear()
     window.print_double_line()
     window.smooth_print("\n".join(dialogs["intro"]["text1"]))
     window.print_double_line()
@@ -121,8 +121,8 @@ def intro():
         window.print_double_line()
         
         # 11 should be calculated with \n
-        y, x = window.stdscr.getyx()
-        window.stdscr.move(y-11, x)
+        y, x = window.getyx()
+        window.move(y-11, x)
 
     if dest == "1":
         Monastery()
@@ -131,7 +131,7 @@ def intro():
 
 
 def Monastery():
-    window.stdscr.clear()
+    window.clear()
     window.print_double_line()
     window.smooth_print("\n".join(dialogs["monastery"]["intro"]))
     window.print_double_line()
@@ -180,7 +180,7 @@ def Monastery():
 
 
 def choose_opponent():
-    window.stdscr.clear()
+    window.clear()
     random.shuffle(fight1pool)
     x = fight1pool[0]
     y = fight1pool[1]
@@ -391,9 +391,10 @@ if __name__ == "__main__":
 
     player = Player()
 
-    def wrapped_main(stdscr):
+    def wrapped_main():
         global window
-        window = Window(stdscr)
+        window = Window()
         mainmenu()
 
-    curses.wrapper(wrapped_main)
+    colorama.init()
+    wrapped_main()
